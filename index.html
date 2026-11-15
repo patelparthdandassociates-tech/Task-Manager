@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>CA Office Task Manager</title>
+<style>
+:root{
+  --bg:#f5f6f8;--card:#fff;--ink:#1d2433;--muted:#667085;--line:#e4e7ec;--soft:#f0f2f5;
+  --acc:#1f4e79;--acc2:#2b6cb0;--accSoft:#e8f0fa;
+  --red:#c0392b;--redSoft:#fdecea;--amber:#b7791f;--amberSoft:#fef6e4;--green:#2f855a;--greenSoft:#e6f4ec;
+  --purple:#6b46c1;--purpleSoft:#f0ebfb;--blue:#2b6cb0;--blueSoft:#e6effa;--gray:#5f6b7a;--graySoft:#eef0f3;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12151b;--card:#1a1f27;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323d;--soft:#222833;
+  --acc:#7fb0e6;--acc2:#7fb0e6;--accSoft:#1f2a3a;--redSoft:#3a1f1d;--amberSoft:#3a301b;--greenSoft:#1b3327;
+  --purpleSoft:#2a2340;--blueSoft:#1d2a3b;--graySoft:#252b35;--red:#f08b80;--amber:#e8b45a;--green:#6cc596;--purple:#b39cf0;--blue:#86b5ea;--gray:#a5afbd}
+}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit;color:inherit}
+.hidden{display:none!important}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:700;letter-spacing:.5px;flex:none}
+@media (prefers-color-scheme:dark){.logo{color:#12151b}}
+h1{font-size:17px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:12px;color:var(--muted)}
+.topR{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.me{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.tabs{display:flex;gap:2px;padding:0 14px;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs a{padding:11px 12px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
+.tabs a.on{color:var(--acc);border-color:var(--acc)}
+main{padding:18px 20px 60px;max-width:1500px;margin:0 auto}
+.btn{border:1px solid var(--line);background:var(--card);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){.btn.primary{color:#12151b}}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--red);border-color:var(--red);background:transparent}
+.btn.sm{padding:4px 9px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+input,select,textarea{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 9px;min-width:0}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accSoft);border-color:var(--acc2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.card h3{margin:0 0 10px;font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer;text-align:left}
+.kpi:hover{border-color:var(--acc2)}
+.kpi .n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi.red .n{color:var(--red)}.kpi.amber .n{color:var(--amber)}.kpi.green .n{color:var(--green)}.kpi.purple .n{color:var(--purple)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+.mini{width:100%;border-collapse:collapse}
+.mini td,.mini th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.mini th{font-size:12px;color:var(--muted);font-weight:600}
+.mini tr.click{cursor:pointer}.mini tr.click:hover{background:var(--soft)}
+.num{text-align:right!important;font-variant-numeric:tabular-nums}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.filters input[type=search]{flex:1 1 220px}
+.filters .grow{flex:1}
+.tablewrap{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:auto}
+.tbl{width:100%;border-collapse:collapse;min-width:1050px}
+.tbl th{position:sticky;top:0;background:var(--soft);font-size:12px;color:var(--muted);text-align:left;padding:9px 8px;font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:hover td{background:var(--soft)}
+.tbl tr.done td{opacity:.62}
+.tbl .t{font-weight:500;cursor:pointer}
+.tbl .t:hover{color:var(--acc2);text-decoration:underline}
+.tbl select.st{padding:4px 6px;font-size:12px;border-radius:999px;font-weight:600}
+.small{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.s-NotStarted{background:var(--graySoft);color:var(--gray)}
+.s-InProgress{background:var(--blueSoft);color:var(--blue)}
+.s-PendingfromClient{background:var(--amberSoft);color:var(--amber)}
+.s-UnderReview{background:var(--purpleSoft);color:var(--purple)}
+.s-Completed{background:var(--greenSoft);color:var(--green)}
+.p-High{color:var(--red);font-weight:600}.p-Medium{color:var(--amber)}.p-Low{color:var(--muted)}
+.due{white-space:nowrap}
+.due .rel{display:block;font-size:11px}
+.rel.over{color:var(--red);font-weight:600}.rel.soon{color:var(--amber);font-weight:600}.rel.ok{color:var(--muted)}
+.bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--accSoft);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin-bottom:10px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(230px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--soft);border-radius:var(--r);padding:10px;min-height:200px}
+.col.over{outline:2px dashed var(--acc2)}
+.col h4{margin:0 0 8px;font-size:13px;display:flex;justify-content:space-between}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;margin-bottom:8px;cursor:grab}
+.kc:hover{border-color:var(--acc2)}
+.kc .kt{font-weight:500;margin-bottom:3px}
+.kc .km{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.banner{padding:10px 20px;background:var(--amberSoft);color:var(--amber);border-bottom:1px solid var(--line);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;user-select:none;background:var(--card)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){.chip.on{color:#12151b}}
+.tag{display:inline-block;background:var(--soft);border-radius:5px;padding:1px 6px;font-size:11px;margin:1px 2px 1px 0;color:var(--muted)}
+/* modal */
+.mback{position:fixed;inset:0;background:rgba(15,20,30,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 12px;overflow:auto;z-index:50}
+.modal{background:var(--card);border-radius:12px;width:min(760px,100%);padding:20px 22px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal.narrow{width:min(440px,100%)}
+.modal h2{margin:0 0 14px;font-size:17px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:500}
+.form label>input,.form label>select,.form label>textarea{color:var(--ink);font-size:14px}
+.form .span2{grid-column:1/-1}
+@media (max-width:600px){.form{grid-template-columns:1fr}}
+.mfoot{display:flex;gap:8px;align-items:center;margin-top:16px}
+.grow{flex:1}
+.log{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;max-height:160px;overflow:auto;font-size:12px;color:var(--muted)}
+.log div{padding:2px 0}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:90vw}
+#toast.show{opacity:1}
+.gen{display:grid;grid-template-columns:360px 1fr;gap:14px}
+@media (max-width:900px){.gen{grid-template-columns:1fr}}
+.gen .form{grid-template-columns:1fr}
+.clist{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.clist label{display:flex;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer}
+.clist label:hover{background:var(--soft)}
+.clist .ex{margin-left:auto;font-size:11px;color:var(--green)}
+.note{font-size:12px;color:var(--muted);background:var(--soft);border-radius:8px;padding:9px 11px;margin-top:8px}
+.note a{color:var(--acc2)}
+.staffRow{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.staffRow .grow{font-weight:500}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input[type=search]{flex:1 1 240px}
+.ro .w{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="logo">CA</div><div style="min-width:0"><h1 id="firmName">CA Office Task Manager</h1><div class="sub" id="syncNote">Connecting to shared storage…</div></div></div>
+  <div class="topR">
+    <label class="me">I am <select id="meSel"></select></label>
+    <button class="btn" id="refreshBtn" title="Load the latest changes">↻ Refresh</button>
+    <button class="btn primary w" id="newTaskBtn">+ New task</button>
+  </div>
+</header>
+<nav class="tabs" id="tabs">
+  <a href="#dashboard" data-v="dashboard">Dashboard</a>
+  <a href="#tasks" data-v="tasks">Tasks</a>
+  <a href="#board" data-v="board">Board</a>
+  <a href="#clients" data-v="clients">Clients</a>
+  <a href="#generate" data-v="generate">Compliance generator</a>
+  <a href="#settings" data-v="settings">Settings</a>
+</nav>
+<div id="banner" class="banner hidden"></div>
+<main>
+  <!-- DASHBOARD -->
+  <section id="v-dashboard" class="view">
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="card"><h3>Overdue</h3><div id="dOver"></div></div>
+      <div class="card"><h3>Due in the next 7 days</h3><div id="dWeek"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Staff workload (open tasks)</h3><div id="dStaff"></div></div>
+      <div class="card"><h3>Open tasks by category</h3><div id="dCat"></div></div>
+    </div>
+  </section>
+
+  <!-- shared filter bar for Tasks + Board -->
+  <div id="filterBar" class="filters hidden">
+    <input type="search" id="fQ" placeholder="Search task, client, ARN, remarks…">
+    <select id="fStatus"></select>
+    <select id="fAssignee"></select>
+    <select id="fCategory"></select>
+    <select id="fClient"></select>
+    <select id="fDue">
+      <option value="all">Any due date</option><option value="overdue">Overdue</option><option value="today">Due today</option>
+      <option value="week">Due in next 7 days</option><option value="month">Due this month</option><option value="nodate">No due date</option>
+    </select>
+    <select id="fPriority"><option value="">Any priority</option><option>High</option><option>Medium</option><option>Low</option></select>
+    <button class="btn" id="fReset">Reset</button>
+    <button class="btn" id="copyTsv" title="Copy the filtered list as tab-separated rows to paste into Excel">Copy for Excel</button>
+  </div>
+
+  <!-- TASKS -->
+  <section id="v-tasks" class="view">
+    <div id="bulkBar" class="bulk hidden"></div>
+    <div class="tablewrap">
+      <table class="tbl">
+        <thead><tr>
+          <th class="w" style="width:30px"><input type="checkbox" id="selAll"></th>
+          <th>Due</th><th>Client</th><th>Task</th><th>Category</th><th>Period</th><th>Assigned</th><th>Reviewer</th><th>Priority</th><th>Status</th><th>Billing</th>
+        </tr></thead>
+        <tbody id="taskBody"></tbody>
+      </table>
+      <div id="taskEmpty" class="empty hidden"></div>
+    </div>
+    <div class="small" id="taskCount" style="margin-top:8px"></div>
+  </section>
+
+  <!-- BOARD -->
+  <section id="v-board" class="view"><div class="board" id="board"></div>
+    <div class="small" style="margin-top:8px">Drag a card to another column to change its status. Click a card to open it.</div></section>
+
+  <!-- CLIENTS -->
+  <section id="v-clients" class="view">
+    <div class="toolbar">
+      <input type="search" id="cQ" placeholder="Search client, PAN, GSTIN, file no…">
+      <select id="cSvc"></select>
+      <label class="small"><input type="checkbox" id="cInactive"> Show inactive</label>
+      <button class="btn primary w" id="addClient">+ Add client</button>
+    </div>
+    <div class="tablewrap">
+      <table class="tbl" style="min-width:900px">
+        <thead><tr><th>Client</th><th>Type</th><th>PAN / GSTIN</th><th>In-charge</th><th>Services</th><th class="num">Open</th><th class="num">Overdue</th><th></th></tr></thead>
+        <tbody id="clientBody"></tbody>
+      </table>
+      <div id="clientEmpty" class="empty hidden"></div>
+    </div>
+  </section>
+
+  <!-- GENERATOR -->
+  <section id="v-generate" class="view">
+    <div class="gen">
+      <div class="card">
+        <h3>1. Pick the compliance and period</h3>
+        <div class="form">
+          <label>Compliance<select id="gTpl"></select></label>
+          <label id="gMonthL">Month<input type="month" id="gMonth"></label>
+          <label id="gFyL">Financial year<select id="gFy"></select></label>
+          <label id="gQL">Quarter<select id="gQ"><option value="1">Q1 (Apr–Jun)</option><option value="2">Q2 (Jul–Sep)</option><option value="3">Q3 (Oct–Dec)</option><option value="4">Q4 (Jan–Mar)</option></select></label>
+          <label>Due date (statutory default — change if extended)<input type="date" id="gDue"></label>
+          <label>Assign to<select id="gAssign"></select></label>
+          <label>Priority<select id="gPri"><option>High</option><option selected>Medium</option><option>Low</option></select></label>
+        </div>
+        <div class="note" id="gNote"></div>
+      </div>
+      <div class="card">
+        <h3>2. Choose clients</h3>
+        <div class="toolbar" style="margin-bottom:8px">
+          <label class="small"><input type="checkbox" id="gAll"> Show all clients (not only those tagged for this service)</label>
+          <span class="grow"></span>
+          <button class="btn sm" id="gSelAll">Select all</button><button class="btn sm" id="gSelNone">Clear</button>
+        </div>
+        <div class="clist" id="gList"></div>
+        <div class="mfoot"><span class="small" id="gSummary"></span><span class="grow"></span><button class="btn primary w" id="gGo">Create tasks</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="v-settings" class="view">
+    <div class="grid2">
+      <div class="card">
+        <h3>Firm</h3>
+        <div class="form" style="grid-template-columns:1fr">
+          <label>Firm name shown in the header<input id="sFirm" placeholder="e.g. ABC & Co., Chartered Accountants"></label>
+        </div>
+        <div class="mfoot"><span class="grow"></span><button class="btn primary w" id="sFirmSave">Save</button></div>
+        <h3 style="margin-top:18px">Staff</h3>
+        <div id="staffList"></div>
+        <div class="toolbar w" style="margin-top:10px">
+          <input id="sName" placeholder="Name" style="flex:1 1 160px">
+          <select id="sRole"><option>Partner</option><option>Manager</option><option selected>Staff</option><option>Article Assistant</option><option>Accountant</option><option>Other</option></select>
+          <button class="btn" id="sAdd">Add</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>How this works</h3>
+        <div class="small" style="line-height:1.6">
+          <p style="margin-top:0">Everything you enter is saved in the office Google Sheet (tabs Tasks, Clients, Staff, Settings). Everyone with the web-app link sees the same data; the page refreshes every minute, or press <b>↻ Refresh</b>. To protect client data, the owner can set an <b>Office PIN</b> in the Settings tab of the Google Sheet.</p>
+          <p>Pick your own name in <b>I am</b> at the top — this device will then show <b>My tasks</b> for you.</p>
+          <p>The <b>Compliance generator</b> fills in standard statutory due dates. Due dates are frequently extended by CBDT / CBIC / MCA notifications, so always check the official portals and correct the date in the generator before creating tasks:</p>
+          <ul style="padding-left:18px;margin:0">
+            <li><a href="https://www.gst.gov.in" target="_blank" rel="noopener">GST portal — gst.gov.in</a> · <a href="https://cbic-gst.gov.in" target="_blank" rel="noopener">CBIC GST notifications</a></li>
+            <li><a href="https://www.incometax.gov.in" target="_blank" rel="noopener">Income-tax e-filing — incometax.gov.in</a> · <a href="https://incometaxindia.gov.in" target="_blank" rel="noopener">incometaxindia.gov.in (tax calendar, notifications)</a></li>
+            <li><a href="https://www.tdscpc.gov.in" target="_blank" rel="noopener">TRACES — tdscpc.gov.in</a></li>
+            <li><a href="https://www.mca.gov.in" target="_blank" rel="noopener">MCA — mca.gov.in</a></li>
+            <li><a href="https://www.epfindia.gov.in" target="_blank" rel="noopener">EPFO — epfindia.gov.in</a> · <a href="https://www.esic.gov.in" target="_blank" rel="noopener">ESIC — esic.gov.in</a></li>
+          </ul>
+        </div>
+        <h3 style="margin-top:18px">Export</h3>
+        <div class="toolbar"><button class="btn" id="exAll">Copy all tasks for Excel</button><button class="btn" id="exClients">Copy client list for Excel</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="modalRoot"></div>
+<div id="toast"></div>
+
+<script>
+/* ---------------- constants ---------------- */
+const STATUSES=['Not Started','In Progress','Pending from Client','Under Review','Completed'];
+const PRIORITIES=['High','Medium','Low'];
+const CATEGORIES=['GST','TDS / TCS','Income Tax','Tax Audit','Transfer Pricing','Statutory Audit','Internal Audit','ROC / MCA','Payroll (PF/ESI/PT)','Accounting','Certification','Litigation / Notices','FEMA / RBI','Other'];
+const SERVICES=['GST Monthly','GST QRMP','GST Composition','TDS','TCS','Advance Tax','ITR','Tax Audit','Transfer Pricing','ROC Company','ROC LLP','PF/ESI','Accounting','Statutory Audit','Internal Audit'];
+const CLIENT_TYPES=['Company (Private)','Company (Listed)','Company (Public unlisted)','LLP','Partnership Firm','Proprietorship','Individual','HUF','Trust / Society','Other'];
+const BILLING=['Not billed','Billed','Received','Non-billable'];
+const GST='https://www.gst.gov.in', IT='https://www.incometax.gov.in', MCA='https://www.mca.gov.in', TR='https://www.tdscpc.gov.in';
+/* freq: M = monthly (day of following month), Q = quarterly [[month,day,yearOffsetFromFYStart] x4], A = annual [month,day,yearOffset] */
+const TPL=[
+ {code:'GSTR1',  name:'GSTR-1 (Monthly)', cat:'GST', freq:'M', day:11, svc:['GST Monthly'], ref:GST, note:'11th of the following month.'},
+ {code:'GSTR3B', name:'GSTR-3B (Monthly)', cat:'GST', freq:'M', day:20, svc:['GST Monthly'], ref:GST, note:'20th of the following month.'},
+ {code:'IFF',    name:'IFF – Invoice Furnishing Facility (QRMP, months 1–2, optional)', cat:'GST', freq:'M', day:13, svc:['GST QRMP'], ref:GST, note:'13th of the following month; only for the first two months of the quarter.'},
+ {code:'PMT06',  name:'PMT-06 tax payment (QRMP, months 1–2)', cat:'GST', freq:'M', day:25, svc:['GST QRMP'], ref:GST, note:'25th of the following month; first two months of the quarter.'},
+ {code:'GSTR1Q', name:'GSTR-1 (Quarterly – QRMP)', cat:'GST', freq:'Q', q:[[7,13,0],[10,13,0],[1,13,1],[4,13,1]], svc:['GST QRMP'], ref:GST, note:'13th of the month after the quarter.'},
+ {code:'GSTR3BQ',name:'GSTR-3B (Quarterly – QRMP)', cat:'GST', freq:'Q', q:[[7,22,0],[10,22,0],[1,22,1],[4,22,1]], svc:['GST QRMP'], ref:GST, note:'22nd for Category-I states (includes Maharashtra); 24th for Category-II states — change the date for those clients.'},
+ {code:'CMP08',  name:'CMP-08 (Composition)', cat:'GST', freq:'Q', q:[[7,18,0],[10,18,0],[1,18,1],[4,18,1]], svc:['GST Composition'], ref:GST, note:'18th of the month after the quarter.'},
+ {code:'GSTR4',  name:'GSTR-4 Annual return (Composition)', cat:'GST', freq:'A', a:[4,30,1], svc:['GST Composition'], ref:GST, note:'30th April after the end of the FY.'},
+ {code:'GSTR9',  name:'GSTR-9 Annual return', cat:'GST', freq:'A', a:[12,31,1], svc:['GST Monthly','GST QRMP'], ref:GST, note:'31st December after the end of the FY (check turnover-based exemptions).'},
+ {code:'GSTR9C', name:'GSTR-9C Reconciliation statement', cat:'GST', freq:'A', a:[12,31,1], svc:['GST Monthly','GST QRMP'], ref:GST, note:'31st December after the end of the FY; applies above the notified turnover threshold.'},
+ {code:'TDSPAY', name:'TDS deposit', cat:'TDS / TCS', freq:'M', day:7, march:[4,30], svc:['TDS'], ref:IT, note:'7th of the following month; for March deductions, 30th April.'},
+ {code:'TCSPAY', name:'TCS deposit', cat:'TDS / TCS', freq:'M', day:7, svc:['TCS'], ref:IT, note:'7th of the following month.'},
+ {code:'TDSRET', name:'TDS returns (24Q / 26Q / 27Q)', cat:'TDS / TCS', freq:'Q', q:[[7,31,0],[10,31,0],[1,31,1],[5,31,1]], svc:['TDS'], ref:TR, note:'31 Jul, 31 Oct, 31 Jan and 31 May.'},
+ {code:'TCSRET', name:'TCS return (27EQ)', cat:'TDS / TCS', freq:'Q', q:[[7,15,0],[10,15,0],[1,15,1],[5,15,1]], svc:['TCS'], ref:TR, note:'15 Jul, 15 Oct, 15 Jan and 15 May.'},
+ {code:'ADVTAX', name:'Advance tax instalment', cat:'Income Tax', freq:'Q', q:[[6,15,0],[9,15,0],[12,15,0],[3,15,1]], svc:['Advance Tax'], ref:IT, note:'15 Jun (15%), 15 Sep (45%), 15 Dec (75%), 15 Mar (100%) — cumulative.'},
+ {code:'ITR12',  name:'ITR – no business income (ITR-1 / ITR-2)', cat:'Income Tax', freq:'A', a:[7,31,1], svc:['ITR'], ref:IT, note:'31st July after the end of the FY.'},
+ {code:'ITRNA',  name:'ITR – business/profession, non-audit (ITR-3 / ITR-4 / firms / trusts)', cat:'Income Tax', freq:'A', a:[8,31,1], svc:['ITR'], ref:IT, note:'31st August after the end of the FY (due date for non-audit business cases, partners of non-audit firms and trusts moved from 31 July to 31 August by Finance Act 2026, applicable from AY 2026-27).'},
+ {code:'TAR',    name:'Tax audit report', cat:'Tax Audit', freq:'A', a:[9,30,1], svc:['Tax Audit'], ref:IT, note:'30th September (one month before the 31 October return due date). For transfer-pricing cases it is 31 October — change the date.'},
+ {code:'ITRA',   name:'ITR – audit cases / companies', cat:'Income Tax', freq:'A', a:[10,31,1], svc:['Tax Audit','ROC Company'], ref:IT, note:'31st October after the end of the FY.'},
+ {code:'TPR',    name:'Transfer pricing report (Accountant’s report – Form 3CEB or its successor)', cat:'Transfer Pricing', freq:'A', a:[10,31,1], svc:['Transfer Pricing'], ref:IT, note:'31st October after the end of the FY.'},
+ {code:'ITRTP',  name:'ITR – transfer pricing cases', cat:'Income Tax', freq:'A', a:[11,30,1], svc:['Transfer Pricing'], ref:IT, note:'30th November after the end of the FY.'},
+ {code:'PFESI',  name:'PF & ESI contribution / ECR', cat:'Payroll (PF/ESI/PT)', freq:'M', day:15, svc:['PF/ESI'], ref:'https://www.epfindia.gov.in', note:'15th of the following month (EPFO and ESIC).'},
+ {code:'DPT3',   name:'DPT-3 Return of deposits', cat:'ROC / MCA', freq:'A', a:[6,30,1], svc:['ROC Company'], ref:MCA, note:'30th June after the end of the FY.'},
+ {code:'ADT1',   name:'ADT-1 Auditor appointment', cat:'ROC / MCA', freq:'A', a:[10,14,1], svc:['ROC Company'], ref:MCA, note:'Within 15 days of the AGM — default assumes AGM on 30 September. Change to match the actual AGM date.'},
+ {code:'AOC4',   name:'AOC-4 Financial statements', cat:'ROC / MCA', freq:'A', a:[10,30,1], svc:['ROC Company'], ref:MCA, note:'Within 30 days of the AGM — default assumes AGM on 30 September.'},
+ {code:'MGT7',   name:'MGT-7 / MGT-7A Annual return', cat:'ROC / MCA', freq:'A', a:[11,29,1], svc:['ROC Company'], ref:MCA, note:'Within 60 days of the AGM — default assumes AGM on 30 September.'},
+ {code:'LLP11',  name:'LLP Form 11 Annual return', cat:'ROC / MCA', freq:'A', a:[5,30,1], svc:['ROC LLP'], ref:MCA, note:'30th May after the end of the FY.'},
+ {code:'LLP8',   name:'LLP Form 8 Statement of account & solvency', cat:'ROC / MCA', freq:'A', a:[10,30,1], svc:['ROC LLP'], ref:MCA, note:'30th October after the end of the FY.'},
+ {code:'STAUD',  name:'Statutory audit – sign-off (internal target)', cat:'Statutory Audit', freq:'A', a:[9,1,1], svc:['Statutory Audit'], ref:MCA, note:'Internal target date, not statutory — set it to suit the AGM plan.'},
+];
+
+/* ---------------- helpers ---------------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayStr=()=>ymd(new Date());
+const parseYmd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const daysUntil=s=>s?Math.round((parseYmd(s)-parseYmd(todayStr()))/864e5):null;
+const fmtDate=s=>s?parseYmd(s).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const fyLabel=y=>y+'-'+pad((y+1)%100);
+const monthLabel=m=>{const [y,mm]=m.split('-').map(Number);return new Date(y,mm-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'})};
+const sKey=s=>String(s).replace(/[^A-Za-z]/g,'');
+const opts=(arr,v)=>arr.map(x=>`<option${x===v?' selected':''}>${esc(x)}</option>`).join('');
+const inr=n=>(n===null||n===undefined||n==='')?'':'₹'+Number(n).toLocaleString('en-IN');
+function loadLS(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
+const curFYStart=()=>{const d=new Date();return d.getMonth()>=3?d.getFullYear():d.getFullYear()-1};
+
+/* ---------------- state ---------------- */
+const S={db:null,user:null,uid:'',readOnly:false,tasks:[],clients:[],clientMap:{},settings:{firm:'',staff:[]},got:{t:false,c:false,s:false},sel:new Set(),view:'dashboard'};
+const DEF_F={q:'',status:'open',assignee:'',category:'',client:'',due:'all',priority:''};
+let F=Object.assign({},DEF_F,loadLS('catm_filters',{}));
+let ME=loadLS('catm_me','');
+const isDone=t=>t.status==='Completed';
+const staffNames=()=>(S.settings.staff||[]).map(s=>s.name);
+const clientName=t=>(t.clientId&&S.clientMap[t.clientId]?.name)||t.clientName||'';
+
+/* ---------------- storage ---------------- */
+let PIN=loadLS('catm_pin','');
+/* ====== PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES (ends with /exec) ====== */
+const WEB_APP_URL='https://script.google.com/macros/s/AKfycbywXUukgpnngf8Gj1D-2T2A2J-7qSz76Ep3a1Da5h-Ca3mJ2SwyTVjL1f9Vn1UnHLjdHg/exec';
+/* ====================================================================================== */
+async function call(action,payload){
+  const r=await fetch(WEB_APP_URL,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({pin:PIN,action,payload:payload||{}})});
+  if(!r.ok)throw new Error('Server error '+r.status);
+  let j;try{j=await r.json()}catch(e){throw new Error('Unexpected reply — check the web app is deployed with access “Anyone”')}
+  if(!j.ok)throw new Error(j.error||'error');
+  return j.data;
+}
+function errMsg(e){return String((e&&e.message)||e||'error')}
+async function run(action,payload,okMsg){
+  $('#syncNote').textContent='Saving…';
+  try{const d=await call(action,payload);apply(d);if(okMsg)toast(okMsg);return d}
+  catch(e){const m=errMsg(e);if(m.includes('PIN_REQUIRED'))askPin();else{toast('Could not save: '+m);refresh(true)}$('#syncNote').textContent='Not saved — check connection';return null}
+}
+function apply(d){if(!d)return;S.tasks=d.tasks||[];S.clients=d.clients||[];S.settings=Object.assign({firm:'',staff:[]},d.settings||{});S.got={t:true,c:true,s:true};S.lastSync=new Date();showBanner('');afterData()}
+let refreshing=false;
+async function refresh(silent){
+  if(refreshing)return;refreshing=true;
+  try{apply(await call('getAll'))}
+  catch(e){const m=errMsg(e);if(m.includes('PIN_REQUIRED'))askPin();else if(!silent)showBanner('Could not load data: '+m)}
+  finally{refreshing=false}
+}
+function askPin(){
+  if(document.getElementById('pinF'))return;
+  const m=modal(`<h2>Enter office PIN</h2><p class="small">Ask your partner for the PIN. It is remembered on this device.</p><form id="pinF" onsubmit="return false"><input id="pinIn" type="password" inputmode="numeric" style="width:100%" autocomplete="off"></form><div class="mfoot"><span class="grow"></span><button class="btn primary" id="pinGo">Open</button></div>`,'narrow');
+  const go=()=>{PIN=m.querySelector('#pinIn').value.trim();saveLS('catm_pin',PIN);closeModal();refresh()};
+  m.querySelector('#pinGo').onclick=go;m.querySelector('#pinF').onsubmit=()=>{go();return false};
+}
+function setReadOnly(){}
+function showBanner(m){const b=$('#banner');if(!m){b.classList.add('hidden');return}b.textContent=m;b.classList.remove('hidden')}
+const by=()=>ME||'';
+function local(id,patch){const t=S.tasks.find(x=>x.id===id);if(t)Object.assign(t,patch)}
+
+/* ---------------- routing ---------------- */
+const VIEWS=['dashboard','tasks','board','clients','generate','settings'];
+function route(){
+  const h=(location.hash||'').replace('#','');S.view=VIEWS.includes(h)?h:'dashboard';
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!=='v-'+S.view));
+  document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.v===S.view));
+  $('#filterBar').classList.toggle('hidden',!(S.view==='tasks'||S.view==='board'));
+  render();
+}
+window.addEventListener('hashchange',route);
+function go(v){if(location.hash==='#'+v)route();else location.hash=v}
+
+/* ---------------- filters ---------------- */
+function filtered(ignoreStatus){
+  const q=F.q.trim().toLowerCase();
+  return S.tasks.filter(t=>{
+    if(!ignoreStatus){
+      if(F.status==='open'&&isDone(t))return false;
+      if(F.status!=='open'&&F.status!=='all'&&t.status!==F.status)return false;
+    }
+    if(F.assignee==='__me'){if(!ME||t.assignee!==ME)return false}
+    else if(F.assignee==='__none'){if(t.assignee)return false}
+    else if(F.assignee&&t.assignee!==F.assignee)return false;
+    if(F.category&&t.category!==F.category)return false;
+    if(F.client&&t.clientId!==F.client)return false;
+    if(F.priority&&t.priority!==F.priority)return false;
+    const d=daysUntil(t.dueDate);
+    if(F.due==='overdue'&&!(d!==null&&d<0&&!isDone(t)))return false;
+    if(F.due==='today'&&d!==0)return false;
+    if(F.due==='week'&&!(d!==null&&d>=0&&d<=7))return false;
+    if(F.due==='month'&&(!t.dueDate||t.dueDate.slice(0,7)!==todayStr().slice(0,7)))return false;
+    if(F.due==='nodate'&&t.dueDate)return false;
+    if(q){const hay=[t.title,clientName(t),t.period,t.remarks,t.arn,t.assignee,t.reviewer,t.category].join(' ').toLowerCase();if(!hay.includes(q))return false}
+    return true;
+  }).sort(sortTasks);
+}
+function sortTasks(a,b){
+  const ac=isDone(a),bc=isDone(b);if(ac!==bc)return ac?1:-1;
+  const ad=a.dueDate||'9999-99-99',bd=b.dueDate||'9999-99-99';
+  if(ad!==bd)return ac?(ad<bd?1:-1):(ad<bd?-1:1);
+  return PRIORITIES.indexOf(a.priority)-PRIORITIES.indexOf(b.priority);
+}
+function fillFilterOptions(){
+  const st=$('#fStatus');st.innerHTML=`<option value="open">All open</option><option value="all">All incl. completed</option>`+STATUSES.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');st.value=F.status;
+  const as=$('#fAssignee');as.innerHTML=`<option value="">Everyone</option><option value="__me">My tasks${ME?' ('+esc(ME)+')':''}</option><option value="__none">Unassigned</option>`+staffNames().map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');as.value=F.assignee;if(as.value!==F.assignee)as.value='';
+  const ca=$('#fCategory');ca.innerHTML=`<option value="">All categories</option>`+CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');ca.value=F.category;
+  const cl=$('#fClient');cl.innerHTML=`<option value="">All clients</option>`+sortedClients().map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');cl.value=F.client;if(cl.value!==F.client)cl.value='';
+  $('#fDue').value=F.due;$('#fPriority').value=F.priority;if(document.activeElement!==$('#fQ'))$('#fQ').value=F.q;
+}
+function setF(patch){Object.assign(F,patch);saveLS('catm_filters',F);S.sel.clear();fillFilterOptions();render()}
+$('#fQ').addEventListener('input',e=>{F.q=e.target.value;saveLS('catm_filters',F);render()});
+[['#fStatus','status'],['#fAssignee','assignee'],['#fCategory','category'],['#fClient','client'],['#fDue','due'],['#fPriority','priority']].forEach(([s,k])=>$(s).addEventListener('change',e=>setF({[k]:e.target.value})));
+$('#fReset').onclick=()=>{F=Object.assign({},DEF_F);$('#fQ').value='';setF({})};
+$('#copyTsv').onclick=()=>copyTasks(filtered(S.view==='board'));
+
+/* ---------------- render ---------------- */
+function render(){
+  $('#firmName').textContent=S.settings.firm||'CA Office Task Manager';
+  document.title=(S.settings.firm?S.settings.firm+' – ':'')+'Task Manager';
+  if(S.view==='dashboard')renderDash();
+  else if(S.view==='tasks')renderTasks();
+  else if(S.view==='board')renderBoard();
+  else if(S.view==='clients')renderClients();
+  else if(S.view==='generate')renderGen();
+  else if(S.view==='settings')renderSettings();
+}
+function dueCell(t){
+  if(!t.dueDate)return '<span class="small">—</span>';
+  const d=daysUntil(t.dueDate);let rel='',cls='ok';
+  if(isDone(t)){rel=t.completedOn?'done '+fmtDate(t.completedOn):'done'}
+  else if(d<0){rel=(-d)+' day'+(d===-1?'':'s')+' overdue';cls='over'}
+  else if(d===0){rel='due today';cls='over'}
+  else if(d<=3){rel='in '+d+' day'+(d===1?'':'s');cls='soon'}
+  else rel='in '+d+' days';
+  return `<span class="due">${fmtDate(t.dueDate)}<span class="rel ${cls}">${rel}</span></span>`;
+}
+const pill=s=>`<span class="pill s-${sKey(s)}">${esc(s)}</span>`;
+
+function renderDash(){
+  const open=S.tasks.filter(t=>!isDone(t));
+  const over=open.filter(t=>t.dueDate&&daysUntil(t.dueDate)<0);
+  const week=open.filter(t=>{const d=daysUntil(t.dueDate);return d!==null&&d>=0&&d<=7});
+  const pend=open.filter(t=>t.status==='Pending from Client');
+  const rev=open.filter(t=>t.status==='Under Review');
+  const ym=todayStr().slice(0,7);
+  const doneM=S.tasks.filter(t=>isDone(t)&&(t.completedOn||'').slice(0,7)===ym);
+  const mine=ME?open.filter(t=>t.assignee===ME).length:null;
+  const k=[
+    ['Open tasks',open.length,'',{status:'open',due:'all',assignee:''}],
+    ['Overdue',over.length,'red',{status:'open',due:'overdue',assignee:''}],
+    ['Due in 7 days',week.length,'amber',{status:'open',due:'week',assignee:''}],
+    ['Pending from client',pend.length,'amber',{status:'Pending from Client',due:'all',assignee:''}],
+    ['Under review',rev.length,'purple',{status:'Under Review',due:'all',assignee:''}],
+    ['Completed this month',doneM.length,'green',{status:'Completed',due:'all',assignee:''}],
+  ];
+  if(mine!==null)k.splice(1,0,['My open tasks',mine,'',{status:'open',due:'all',assignee:'__me'}]);
+  $('#kpis').innerHTML=k.map((x,i)=>`<button class="kpi ${x[2]}" data-i="${i}"><div class="n">${x[1]}</div><div class="l">${x[0]}</div></button>`).join('');
+  $('#kpis').querySelectorAll('.kpi').forEach(b=>b.onclick=()=>{const p=k[+b.dataset.i][3];Object.assign(F,DEF_F,p);saveLS('catm_filters',F);fillFilterOptions();go('tasks')});
+  const list=(arr,emptyMsg)=>arr.length?`<table class="mini"><tr><th>Due</th><th>Client / task</th><th>Assigned</th><th>Status</th></tr>${arr.sort(sortTasks).slice(0,12).map(t=>`<tr class="click" data-id="${esc(t.id)}"><td>${dueCell(t)}</td><td><b>${esc(clientName(t)||'—')}</b><div class="small">${esc(t.title)}${t.period?' · '+esc(t.period):''}</div></td><td>${esc(t.assignee||'—')}</td><td>${pill(t.status)}</td></tr>`).join('')}</table>${arr.length>12?`<div class="small" style="margin-top:6px">+${arr.length-12} more</div>`:''}`:`<div class="empty">${emptyMsg}</div>`;
+  const loading=!S.got.t?'Loading…':null;
+  $('#dOver').innerHTML=loading?`<div class="empty">${loading}</div>`:list(over,'Nothing overdue.');
+  $('#dWeek').innerHTML=loading?`<div class="empty">${loading}</div>`:list(week,'Nothing due in the next 7 days.');
+  document.querySelectorAll('#dOver tr.click,#dWeek tr.click').forEach(r=>r.onclick=()=>openTask(r.dataset.id));
+  // staff
+  const names=[...new Set([...staffNames(),...open.map(t=>t.assignee||'')])];
+  const rows=names.map(n=>{const a=open.filter(t=>(t.assignee||'')===n);return{n,o:a.length,ov:a.filter(t=>t.dueDate&&daysUntil(t.dueDate)<0).length,w:a.filter(t=>{const d=daysUntil(t.dueDate);return d!==null&&d>=0&&d<=7}).length,p:a.filter(t=>t.status==='Pending from Client').length}}).filter(r=>r.o||r.n);
+  $('#dStaff').innerHTML=rows.length?`<table class="mini"><tr><th>Staff</th><th class="num">Open</th><th class="num">Overdue</th><th class="num">Due ≤7d</th><th class="num">With client</th></tr>${rows.sort((a,b)=>b.o-a.o).map(r=>`<tr class="click" data-n="${esc(r.n)}"><td>${esc(r.n||'Unassigned')}</td><td class="num">${r.o}</td><td class="num" style="${r.ov?'color:var(--red);font-weight:600':''}">${r.ov}</td><td class="num">${r.w}</td><td class="num">${r.p}</td></tr>`).join('')}</table>`:`<div class="empty">Add staff in Settings to see workload.</div>`;
+  document.querySelectorAll('#dStaff tr.click').forEach(r=>r.onclick=()=>{Object.assign(F,DEF_F,{assignee:r.dataset.n||'__none'});saveLS('catm_filters',F);fillFilterOptions();go('tasks')});
+  const cats=CATEGORIES.map(c=>({c,n:open.filter(t=>t.category===c).length,o:open.filter(t=>t.category===c&&t.dueDate&&daysUntil(t.dueDate)<0).length})).filter(x=>x.n);
+  const mx=Math.max(1,...cats.map(x=>x.n));
+  $('#dCat').innerHTML=cats.length?`<table class="mini"><tr><th>Category</th><th class="num">Open</th><th class="num">Overdue</th><th style="width:40%"></th></tr>${cats.sort((a,b)=>b.n-a.n).map(x=>`<tr class="click" data-c="${esc(x.c)}"><td>${esc(x.c)}</td><td class="num">${x.n}</td><td class="num" style="${x.o?'color:var(--red);font-weight:600':''}">${x.o}</td><td><div style="height:8px;border-radius:4px;background:var(--acc2);opacity:.75;width:${Math.round(x.n/mx*100)}%"></div></td></tr>`).join('')}</table>`:`<div class="empty">${S.got.t?'No open tasks yet. Use “+ New task” or the Compliance generator.':'Loading…'}</div>`;
+  document.querySelectorAll('#dCat tr.click').forEach(r=>r.onclick=()=>{Object.assign(F,DEF_F,{category:r.dataset.c});saveLS('catm_filters',F);fillFilterOptions();go('tasks')});
+}
+
+function renderTasks(){
+  const rows=filtered(false);
+  for(const id of [...S.sel])if(!rows.some(t=>t.id===id))S.sel.delete(id);
+  $('#taskBody').innerHTML=rows.map(t=>`<tr class="${isDone(t)?'done':''}" data-id="${esc(t.id)}">
+    <td class="w"><input type="checkbox" class="rs" ${S.sel.has(t.id)?'checked':''}></td>
+    <td>${dueCell(t)}</td>
+    <td>${esc(clientName(t)||'—')}</td>
+    <td><span class="t">${esc(t.title)}</span>${t.arn?`<div class="small">ARN ${esc(t.arn)}</div>`:''}${t.remarks?`<div class="small" title="${esc(t.remarks)}">${esc(t.remarks.length>70?t.remarks.slice(0,70)+'…':t.remarks)}</div>`:''}</td>
+    <td>${esc(t.category||'')}</td>
+    <td>${esc(t.period||'')}</td>
+    <td>${esc(t.assignee||'—')}</td>
+    <td>${esc(t.reviewer||'')}</td>
+    <td><span class="p-${esc(t.priority||'Medium')}">${esc(t.priority||'Medium')}</span></td>
+    <td><select class="st s-${sKey(t.status)}" ${S.readOnly?'disabled':''}>${opts(STATUSES,t.status)}</select></td>
+    <td>${esc(t.billing||'')}${t.fees?`<div class="small">${inr(t.fees)}</div>`:''}</td></tr>`).join('');
+  const e=$('#taskEmpty');
+  if(!S.got.t){e.textContent='Loading tasks…';e.classList.remove('hidden')}
+  else if(!rows.length){e.textContent=S.tasks.length?'No tasks match these filters.':'No tasks yet — add one with “+ New task”, or create a batch from the Compliance generator.';e.classList.remove('hidden')}
+  else e.classList.add('hidden');
+  $('#taskCount').textContent=S.got.t?`${rows.length} task${rows.length===1?'':'s'} shown · ${S.tasks.length} in total`:'';
+  $('#taskBody').querySelectorAll('tr').forEach(tr=>{
+    const id=tr.dataset.id;
+    tr.querySelector('.t').onclick=()=>openTask(id);
+    tr.querySelector('.st').onchange=e=>changeStatus(id,e.target.value);
+    tr.querySelector('.rs').onchange=e=>{e.target.checked?S.sel.add(id):S.sel.delete(id);renderBulk(rows)};
+  });
+  $('#selAll').checked=rows.length>0&&rows.every(t=>S.sel.has(t.id));
+  $('#selAll').onchange=e=>{rows.forEach(t=>e.target.checked?S.sel.add(t.id):S.sel.delete(t.id));renderTasks()};
+  renderBulk(rows);
+}
+function renderBulk(rows){
+  const b=$('#bulkBar');const n=S.sel.size;
+  if(!n||S.readOnly){b.classList.add('hidden');return}
+  b.classList.remove('hidden');
+  b.innerHTML=`<b>${n} selected</b><select id="bSt"><option value="">Set status…</option>${STATUSES.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
+   <select id="bAs"><option value="">Assign to…</option><option value="__none">— Unassigned —</option>${staffNames().map(s=>`<option>${esc(s)}</option>`).join('')}</select>
+   <input type="date" id="bDue" title="Set due date"><button class="btn sm" id="bDueGo">Set due date</button>
+   <span class="grow"></span><button class="btn sm danger" id="bDel">Delete</button><button class="btn sm" id="bClr">Clear selection</button>`;
+  $('#bSt').onchange=e=>e.target.value&&bulk(t=>{const o={status:e.target.value};if(o.status==='Completed'&&!t.completedOn)o.completedOn=todayStr();return o},'Status → '+e.target.value);
+  $('#bAs').onchange=e=>{const v=e.target.value==='__none'?'':e.target.value;e.target.value&&bulk(()=>({assignee:v}),'Assigned → '+(v||'unassigned'))};
+  $('#bDueGo').onclick=()=>{const v=$('#bDue').value;if(!v){toast('Pick a date first');return}bulk(()=>({dueDate:v}),'Due date → '+fmtDate(v))};
+  $('#bDel').onclick=async()=>{if(!await confirmBox(`Delete ${n} task${n===1?'':'s'}? This cannot be undone.`))return;const ids=[...S.sel];S.sel.clear();await run('deleteTasks',{ids},ids.length+' deleted')};
+  $('#bClr').onclick=()=>{S.sel.clear();render()};
+}
+async function bulk(fn,logText){
+  const items=[...S.sel].map(id=>{const t=S.tasks.find(x=>x.id===id);if(!t)return null;const patch=fn(t);local(id,patch);return{id,patch,log:logText}}).filter(Boolean);
+  S.sel.clear();render();
+  await run('patchTasks',{items,by:by()},`Updated ${items.length} task${items.length===1?'':'s'}`);
+}
+async function changeStatus(id,st){
+  const t=S.tasks.find(x=>x.id===id);if(!t||t.status===st)return;
+  const patch={status:st};if(st==='Completed'&&!t.completedOn)patch.completedOn=todayStr();
+  const log=`Status: ${t.status} → ${st}`;local(id,patch);render();
+  await run('patchTasks',{items:[{id,patch,log}],by:by()},st==='Completed'?'Marked completed':'Status updated');
+}
+
+function renderBoard(){
+  const rows=filtered(true).filter(t=>F.status==='open'||F.status==='all'||t.status===F.status);
+  const b=$('#board');
+  b.innerHTML=STATUSES.map(s=>{const a=rows.filter(t=>t.status===s);const shown=s==='Completed'?a.slice(0,30):a;
+    return `<div class="col" data-s="${esc(s)}"><h4>${pill(s)}<span class="small">${a.length}</span></h4>
+    ${shown.map(t=>`<div class="kc" draggable="${!S.readOnly}" data-id="${esc(t.id)}"><div class="small">${esc(clientName(t)||'—')}</div><div class="kt">${esc(t.title)}</div>
+    <div class="km"><span>${t.dueDate?dueCell(t):''}</span><span>${esc(t.assignee||'Unassigned')}</span></div></div>`).join('')}
+    ${s==='Completed'&&a.length>30?`<div class="small">Showing latest 30</div>`:''}
+    ${!a.length?`<div class="small" style="padding:8px 2px">${S.got.t?'—':'Loading…'}</div>`:''}</div>`}).join('');
+  b.querySelectorAll('.kc').forEach(c=>{c.onclick=()=>openTask(c.dataset.id);c.ondragstart=e=>{e.dataTransfer.setData('text/plain',c.dataset.id)}});
+  b.querySelectorAll('.col').forEach(col=>{
+    col.ondragover=e=>{e.preventDefault();col.classList.add('over')};
+    col.ondragleave=()=>col.classList.remove('over');
+    col.ondrop=e=>{e.preventDefault();col.classList.remove('over');const id=e.dataTransfer.getData('text/plain');if(id)changeStatus(id,col.dataset.s)};
+  });
+}
+
+/* ---------------- task modal ---------------- */
+function modal(html,cls=''){
+  const r=$('#modalRoot');r.innerHTML=`<div class="mback"><div class="modal ${cls}">${html}</div></div>`;
+  const back=r.firstChild;back.onclick=e=>{if(e.target===back)closeModal()};
+  back.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal);
+  const f=back.querySelector('input,select,textarea');if(f)setTimeout(()=>f.focus(),30);
+  return back;
+}
+function closeModal(){$('#modalRoot').innerHTML=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function confirmBox(msg,ok='Delete'){return new Promise(res=>{const m=modal(`<h2>Please confirm</h2><p>${esc(msg)}</p><div class="mfoot"><span class="grow"></span><button class="btn" id="cNo">Cancel</button><button class="btn danger" id="cYes">${esc(ok)}</button></div>`,'narrow');
+  m.querySelector('#cNo').onclick=()=>{closeModal();res(false)};m.querySelector('#cYes').onclick=()=>{closeModal();res(true)};m.onclick=e=>{if(e.target===m){closeModal();res(false)}}})}
+const sortedClients=(incInactive)=>S.clients.filter(c=>incInactive||c.active!==false).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+function clientOpts(v){const list=sortedClients(false);if(v&&!list.some(c=>c.id===v)&&S.clientMap[v])list.push(S.clientMap[v]);return `<option value="">— Internal / no client —</option>`+list.map(c=>`<option value="${esc(c.id)}"${c.id===v?' selected':''}>${esc(c.name)}</option>`).join('')}
+function staffOpts(v,blank){const n=staffNames();if(v&&!n.includes(v))n.push(v);return `<option value="">${blank}</option>`+n.map(x=>`<option${x===v?' selected':''}>${esc(x)}</option>`).join('')}
+
+async function openTask(id,preset={}){
+  const t=id?S.tasks.find(x=>x.id===id):null;
+  if(id&&!t){toast('Task not found');return}
+  const v=t||Object.assign({title:'',clientId:'',category:'Other',period:'',dueDate:'',assignee:ME||'',reviewer:'',priority:'Medium',status:'Not Started',fees:'',billing:'Not billed',arn:'',completedOn:'',remarks:''},preset);
+  const ro=S.readOnly?'disabled':'';
+  const m=modal(`<h2>${t?'Task':'New task'}</h2>
+  <form id="tf" class="form" onsubmit="return false">
+    <label class="span2">Task *<input name="title" ${ro} required value="${esc(v.title)}" placeholder="e.g. GSTR-3B, reply to scrutiny notice, stock audit, net-worth certificate"></label>
+    <label>Client<select name="clientId" ${ro}>${clientOpts(v.clientId)}</select></label>
+    <label>Category<select name="category" ${ro}>${opts(CATEGORIES,v.category)}</select></label>
+    <label>Period / FY<input name="period" ${ro} value="${esc(v.period)}" placeholder="e.g. Oct 2026, Q2 FY 2026-27, FY 2025-26"></label>
+    <label>Due date<input type="date" name="dueDate" ${ro} value="${esc(v.dueDate)}"></label>
+    <label>Assigned to<select name="assignee" ${ro}>${staffOpts(v.assignee,'— Unassigned —')}</select></label>
+    <label>Reviewer<select name="reviewer" ${ro}>${staffOpts(v.reviewer,'— None —')}</select></label>
+    <label>Priority<select name="priority" ${ro}>${opts(PRIORITIES,v.priority)}</select></label>
+    <label>Status<select name="status" ${ro}>${opts(STATUSES,v.status)}</select></label>
+    <label>Fees (₹)<input type="number" min="0" step="1" name="fees" ${ro} value="${esc(v.fees??'')}"></label>
+    <label>Billing<select name="billing" ${ro}>${opts(BILLING,v.billing||'Not billed')}</select></label>
+    <label>ARN / acknowledgement no.<input name="arn" ${ro} value="${esc(v.arn)}"></label>
+    <label>Completed / filed on<input type="date" name="completedOn" ${ro} value="${esc(v.completedOn)}"></label>
+    <label class="span2">Remarks / documents pending<textarea name="remarks" rows="3" ${ro}>${esc(v.remarks)}</textarea></label>
+  </form>
+  ${t?`<div class="log" id="tLog">Loading history…</div>`:''}
+  <div class="mfoot">${t&&!S.readOnly?'<button class="btn danger" id="tDel">Delete</button><button class="btn" id="tDup">Duplicate</button>':''}<span class="grow"></span><button class="btn" data-close>${S.readOnly?'Close':'Cancel'}</button>${S.readOnly?'':'<button class="btn primary" id="tSave">Save</button>'}</div>`);
+  if(t){
+    const el=m.querySelector('#tLog');
+    if(el)el.innerHTML=[...(t.log||[])].reverse().map(l=>`<div>${esc(new Date(l.at).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}))} · ${esc(l.by||'—')} · ${esc(l.t)}</div>`).join('')||'<div>No history yet.</div>';
+  }
+  if(S.readOnly)return;
+  m.querySelector('#tSave').onclick=async()=>{
+    const o=Object.fromEntries(new FormData(m.querySelector('#tf')));
+    o.title=(o.title||'').trim();if(!o.title){toast('Enter what the task is');return}
+    o.fees=o.fees===''?null:Number(o.fees);
+    o.clientName=o.clientId?(S.clientMap[o.clientId]?.name||''):'';
+    if(o.status==='Completed'&&!o.completedOn)o.completedOn=todayStr();
+    let log='Created';
+    if(t){
+      const ch=[];
+      if(t.status!==o.status)ch.push(`Status: ${t.status} → ${o.status}`);
+      if((t.assignee||'')!==o.assignee)ch.push(`Assigned: ${t.assignee||'unassigned'} → ${o.assignee||'unassigned'}`);
+      if((t.dueDate||'')!==o.dueDate)ch.push(`Due date: ${fmtDate(t.dueDate)} → ${fmtDate(o.dueDate)}`);
+      log=ch.join('; ')||'Edited';o.id=t.id;
+    }
+    const btn=m.querySelector('#tSave');btn.disabled=true;btn.textContent='Saving…';
+    const ok=await run('saveTask',{task:o,log,by:by()},t?'Task saved':'Task added');
+    if(ok)closeModal();else{btn.disabled=false;btn.textContent='Save'}
+  };
+  if(t){
+    m.querySelector('#tDel').onclick=async()=>{if(await confirmBox('Delete this task? This cannot be undone.')){await run('deleteTasks',{ids:[t.id]},'Task deleted')}else openTask(t.id)};
+    m.querySelector('#tDup').onclick=()=>{const {id:_i,log,createdAt,createdBy,updatedAt,updatedBy,genKey,...rest}=t;openTask(null,{...rest,status:'Not Started',arn:'',completedOn:'',billing:'Not billed'})};
+  }
+}
+
+$('#newTaskBtn').onclick=()=>openTask(null,F.client?{clientId:F.client}:{});
+
+/* ---------------- copy for Excel ---------------- */
+function tsv(rows){return rows.map(r=>r.map(x=>String(x??'').replace(/[\t\r\n]+/g,' ')).join('\t')).join('\n')}
+async function copyText(text,n,what){
+  try{await navigator.clipboard.writeText(text);toast(`Copied ${n} ${what} — paste into Excel`)}
+  catch(e){const m=modal(`<h2>Copy for Excel</h2><p class="small">Select all (Ctrl/Cmd + A), copy, and paste into Excel.</p><textarea style="width:100%;height:260px">${esc(text)}</textarea><div class="mfoot"><span class="grow"></span><button class="btn" data-close>Close</button></div>`);m.querySelector('textarea').select()}
+}
+function copyTasks(rows){
+  const head=['Due date','Client','Task','Category','Period','Assigned to','Reviewer','Priority','Status','Fees (Rs)','Billing','ARN / Ack no.','Completed on','Remarks'];
+  copyText(tsv([head,...rows.map(t=>[t.dueDate||'',clientName(t),t.title,t.category,t.period,t.assignee,t.reviewer,t.priority,t.status,t.fees??'',t.billing,t.arn,t.completedOn,t.remarks])]),rows.length,'tasks');
+}
+
+/* ---------------- clients ---------------- */
+$('#cSvc').innerHTML=`<option value="">All services</option>`+SERVICES.map(s=>`<option>${esc(s)}</option>`).join('');
+['#cQ','#cSvc','#cInactive'].forEach(s=>$(s).addEventListener(s==='#cQ'?'input':'change',renderClients));
+$('#addClient').onclick=()=>openClient(null);
+function renderClients(){
+  const q=$('#cQ').value.trim().toLowerCase(),svc=$('#cSvc').value,inc=$('#cInactive').checked;
+  const list=sortedClients(inc).filter(c=>(!svc||(c.services||[]).includes(svc))&&(!q||[c.name,c.pan,c.gstin,c.fileNo,c.contact,c.group].join(' ').toLowerCase().includes(q)));
+  $('#clientBody').innerHTML=list.map(c=>{const ts=S.tasks.filter(t=>t.clientId===c.id&&!isDone(t));const ov=ts.filter(t=>t.dueDate&&daysUntil(t.dueDate)<0).length;
+    return `<tr data-id="${esc(c.id)}"><td><span class="t">${esc(c.name)}</span>${c.fileNo?`<div class="small">File ${esc(c.fileNo)}</div>`:''}${c.active===false?'<div class="small">Inactive</div>':''}</td>
+    <td>${esc(c.type||'')}</td><td>${esc(c.pan||'')}${c.gstin?`<div class="small">${esc(c.gstin)}</div>`:''}</td><td>${esc(c.incharge||'—')}</td>
+    <td>${(c.services||[]).map(s=>`<span class="tag">${esc(s)}</span>`).join('')}</td>
+    <td class="num">${ts.length}</td><td class="num" style="${ov?'color:var(--red);font-weight:600':''}">${ov}</td>
+    <td style="white-space:nowrap"><button class="btn sm vt">Tasks</button> <button class="btn sm w nt">+ Task</button></td></tr>`}).join('');
+  const e=$('#clientEmpty');
+  if(!S.got.c){e.textContent='Loading clients…';e.classList.remove('hidden')}
+  else if(!list.length){e.textContent=S.clients.length?'No clients match.':'No clients yet — add your first client. Tag each client with the services you handle (GST monthly, TDS, ROC, etc.) so the Compliance generator can pick them up.';e.classList.remove('hidden')}
+  else e.classList.add('hidden');
+  $('#clientBody').querySelectorAll('tr').forEach(tr=>{const id=tr.dataset.id;
+    tr.querySelector('.t').onclick=()=>openClient(id);
+    tr.querySelector('.vt').onclick=()=>{Object.assign(F,DEF_F,{client:id});saveLS('catm_filters',F);fillFilterOptions();go('tasks')};
+    tr.querySelector('.nt').onclick=()=>openTask(null,{clientId:id,assignee:S.clientMap[id]?.incharge||ME||''});
+  });
+}
+function openClient(id){
+  const c=id?S.clientMap[id]:null;
+  const v=c||{name:'',type:'Company (Private)',fileNo:'',pan:'',gstin:'',contact:'',phone:'',email:'',incharge:'',services:[],group:'',notes:'',active:true};
+  const ro=S.readOnly?'disabled':'';
+  const sel=new Set(v.services||[]);
+  const m=modal(`<h2>${c?'Client':'New client'}</h2>
+  <form id="cf" class="form" onsubmit="return false">
+    <label class="span2">Client name *<input name="name" ${ro} value="${esc(v.name)}"></label>
+    <label>Constitution<select name="type" ${ro}>${opts(CLIENT_TYPES,v.type)}</select></label>
+    <label>File no.<input name="fileNo" ${ro} value="${esc(v.fileNo)}"></label>
+    <label>PAN<input name="pan" ${ro} value="${esc(v.pan)}" maxlength="10" style="text-transform:uppercase"></label>
+    <label>GSTIN<input name="gstin" ${ro} value="${esc(v.gstin)}" maxlength="15" style="text-transform:uppercase"></label>
+    <label>Contact person<input name="contact" ${ro} value="${esc(v.contact)}"></label>
+    <label>Phone<input name="phone" ${ro} value="${esc(v.phone)}"></label>
+    <label>Email<input name="email" ${ro} value="${esc(v.email)}"></label>
+    <label>Group<input name="group" ${ro} value="${esc(v.group)}" placeholder="e.g. family / business group"></label>
+    <label>In-charge (default assignee)<select name="incharge" ${ro}>${staffOpts(v.incharge,'— None —')}</select></label>
+    <label>Status<select name="active" ${ro}><option value="1"${v.active!==false?' selected':''}>Active</option><option value="0"${v.active===false?' selected':''}>Inactive</option></select></label>
+    <label class="span2">Services handled<div class="chips" id="svcChips">${SERVICES.map(s=>`<span class="chip${sel.has(s)?' on':''}" data-s="${esc(s)}">${esc(s)}</span>`).join('')}</div></label>
+    <label class="span2">Notes<textarea name="notes" rows="2" ${ro}>${esc(v.notes)}</textarea></label>
+  </form>
+  <div class="mfoot">${c&&!S.readOnly?'<button class="btn danger" id="cDel">Delete</button>':''}<span class="grow"></span><button class="btn" data-close>${S.readOnly?'Close':'Cancel'}</button>${S.readOnly?'':'<button class="btn primary" id="cSave">Save</button>'}</div>`);
+  if(S.readOnly)return;
+  m.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{const s=ch.dataset.s;sel.has(s)?sel.delete(s):sel.add(s);ch.classList.toggle('on')});
+  m.querySelector('#cSave').onclick=async()=>{
+    const o=Object.fromEntries(new FormData(m.querySelector('#cf')));
+    o.name=(o.name||'').trim();if(!o.name){toast('Enter the client name');return}
+    o.pan=(o.pan||'').toUpperCase().trim();o.gstin=(o.gstin||'').toUpperCase().trim();
+    if(o.pan&&!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(o.pan)){toast('PAN format looks wrong (AAAAA9999A)');return}
+    if(o.gstin&&!/^[0-9]{2}[A-Z0-9]{10}[0-9A-Z]Z[0-9A-Z]$/.test(o.gstin)){toast('GSTIN should be 15 characters, e.g. 27AAAAA0000A1Z5');return}
+    o.active=o.active!=='0';o.services=[...sel];
+    if(c)o.id=c.id;
+    const ok=await run('saveClient',{client:o,by:by()},'Client saved');
+    if(ok)closeModal();
+  };
+  if(c)m.querySelector('#cDel').onclick=async()=>{const n=S.tasks.filter(t=>t.clientId===c.id).length;
+    if(await confirmBox(`Delete client “${c.name}”?${n?` Its ${n} task${n===1?'':'s'} will stay, showing the client name.`:''} Tip: set it to Inactive instead to keep history.`)){await run('deleteClient',{id:c.id},'Client deleted')}else openClient(c.id)};
+}
+
+/* ---------------- generator ---------------- */
+let genInit=false;const gPick=new Set();
+function initGen(){
+  if(genInit)return;genInit=true;
+  const groups={};TPL.forEach(t=>(groups[t.cat]=groups[t.cat]||[]).push(t));
+  $('#gTpl').innerHTML=Object.entries(groups).map(([g,a])=>`<optgroup label="${esc(g)}">${a.map(t=>`<option value="${t.code}">${esc(t.name)}</option>`).join('')}</optgroup>`).join('');
+  const fy=curFYStart();
+  $('#gFy').innerHTML=[fy+1,fy,fy-1,fy-2].map(y=>`<option value="${y}">FY ${fyLabel(y)}</option>`).join('');
+  const d=new Date();const pm=new Date(d.getFullYear(),d.getMonth()-1,1);$('#gMonth').value=pm.getFullYear()+'-'+pad(pm.getMonth()+1);
+  ['#gTpl','#gMonth','#gFy','#gQ'].forEach(s=>$(s).addEventListener('change',()=>{gDueTouched=false;gPick.clear();gAuto=true;renderGen()}));
+  $('#gDue').addEventListener('change',()=>{gDueTouched=true;renderGenSummary()});
+  $('#gAll').addEventListener('change',()=>renderGen());
+  $('#gSelAll').onclick=()=>{genClients().forEach(c=>gPick.add(c.id));renderGen()};
+  $('#gSelNone').onclick=()=>{gPick.clear();gAuto=false;renderGen()};
+  $('#gGo').onclick=runGen;
+  setTplDefaults();
+}
+let gDueTouched=false,gAuto=true,lastTpl='';
+function setTplDefaults(){
+  const t=curTpl();const fy=curFYStart();
+  if(t.freq==='A')$('#gFy').value=String(fy-1);
+  else if(t.freq==='Q'){$('#gFy').value=String(fy);const m=new Date().getMonth();const cq=m>=3?Math.floor((m-3)/3)+1:4;const pq=cq===1?4:cq-1;if(cq===1)$('#gFy').value=String(fy-1);$('#gQ').value=String(pq)}
+}
+const curTpl=()=>TPL.find(t=>t.code===$('#gTpl').value)||TPL[0];
+function genPeriod(){
+  const t=curTpl();
+  if(t.freq==='M'){const m=$('#gMonth').value;if(!m)return null;return{key:m,label:monthLabel(m),m}}
+  const fy=+$('#gFy').value;
+  if(t.freq==='Q'){const q=+$('#gQ').value;return{key:fyLabel(fy)+'-Q'+q,label:`Q${q} FY ${fyLabel(fy)}`,fy,q}}
+  return{key:fyLabel(fy),label:`FY ${fyLabel(fy)}`,fy};
+}
+function computeDue(t,p){
+  if(!p)return'';
+  if(t.freq==='M'){const [y,m]=p.m.split('-').map(Number);if(t.march&&m===3)return ymd(new Date(y,t.march[0]-1,t.march[1]));return ymd(new Date(y,m,t.day))}
+  if(t.freq==='Q'){const [mo,d,yo]=t.q[p.q-1];return ymd(new Date(p.fy+yo,mo-1,d))}
+  const [mo,d,yo]=t.a;return ymd(new Date(p.fy+yo,mo-1,d));
+}
+const genId=(cid,t,p)=>`${cid}__${t.code}__${p.key}`.replace(/[^A-Za-z0-9_\-.~:@+]/g,'-');
+function genClients(){const t=curTpl();const all=$('#gAll').checked;return sortedClients(false).filter(c=>all||(c.services||[]).some(s=>t.svc.includes(s)))}
+function renderGen(){
+  initGen();
+  const t=curTpl();
+  if(t.code!==lastTpl){if(lastTpl)setTplDefaults();lastTpl=t.code}
+  $('#gMonthL').classList.toggle('hidden',t.freq!=='M');
+  $('#gFyL').classList.toggle('hidden',t.freq==='M');
+  $('#gQL').classList.toggle('hidden',t.freq!=='Q');
+  const p=genPeriod();
+  if(!gDueTouched)$('#gDue').value=computeDue(t,p);
+  const a=$('#gAssign'),av=a.value;
+  a.innerHTML=`<option value="__incharge">Client’s in-charge (from client master)</option><option value="">— Unassigned —</option>`+staffNames().map(n=>`<option>${esc(n)}</option>`).join('');
+  a.value=av||'__incharge';if(a.value!==(av||'__incharge'))a.value='__incharge';
+  $('#gNote').innerHTML=`<b>Standard due date:</b> ${esc(t.note)}<br>Tasks are created as “${esc(t.name)} – ${esc(p?p.label:'')}”. Already-created tasks for the same client, compliance and period are skipped, so it is safe to run again.<br>Verify any extension on the <a href="${esc(t.ref)}" target="_blank" rel="noopener">official portal</a> before creating.`;
+  const list=genClients();
+  if(gAuto&&p)list.forEach(c=>{if(!S.tasks.some(x=>x.id===genId(c.id,t,p)))gPick.add(c.id)});
+  gAuto=false;
+  $('#gList').innerHTML=!S.got.c?'<div class="empty">Loading clients…</div>':list.length?list.map(c=>{const ex=p&&S.tasks.some(x=>x.id===genId(c.id,t,p));
+    return `<label><input type="checkbox" data-id="${esc(c.id)}" ${gPick.has(c.id)&&!ex?'checked':''} ${ex?'disabled':''}> <span>${esc(c.name)}<span class="small"> ${esc(c.incharge?'· '+c.incharge:'')}</span></span>${ex?'<span class="ex">already created</span>':''}</label>`}).join('')
+    :`<div class="empty">No active clients are tagged for “${esc(t.svc.join(' / '))}”. Tag clients under Clients → Services, or tick “Show all clients”.</div>`;
+  $('#gList').querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{cb.checked?gPick.add(cb.dataset.id):gPick.delete(cb.dataset.id);renderGenSummary()});
+  renderGenSummary();
+}
+function renderGenSummary(){
+  const t=curTpl(),p=genPeriod();
+  const n=genClients().filter(c=>gPick.has(c.id)&&p&&!S.tasks.some(x=>x.id===genId(c.id,t,p))).length;
+  $('#gSummary').textContent=p?`${n} task${n===1?'':'s'} will be created · due ${fmtDate($('#gDue').value)}`:'Pick a period';
+  $('#gGo').disabled=!n||S.readOnly;
+}
+async function runGen(){
+  const t=curTpl(),p=genPeriod(),due=$('#gDue').value,asg=$('#gAssign').value,pri=$('#gPri').value;
+  if(!p)return;
+  const list=genClients().filter(c=>gPick.has(c.id)&&!S.tasks.some(x=>x.id===genId(c.id,t,p)));
+  if(!list.length)return;
+  const btn=$('#gGo');btn.disabled=true;btn.textContent=`Creating ${list.length} tasks…`;
+  const tasks=list.map(c=>({id:genId(c.id,t,p),title:t.name,clientId:c.id,clientName:c.name,category:t.cat,period:p.label,dueDate:due,assignee:asg==='__incharge'?(c.incharge||''):asg,reviewer:'',priority:pri,status:'Not Started',fees:null,billing:'Not billed',arn:'',completedOn:'',remarks:'',genKey:t.code+'|'+p.key}));
+  const d=await run('createTasks',{tasks,by:by(),log:'Created from compliance generator'});
+  btn.textContent='Create tasks';gPick.clear();
+  if(d){const n=(d.info&&d.info.created)||0;toast(`Created ${n} task${n===1?'':'s'}`)}
+  renderGen();
+}
+
+/* ---------------- settings ---------------- */
+function renderSettings(){
+  if(document.activeElement!==$('#sFirm'))$('#sFirm').value=S.settings.firm||'';
+  const st=S.settings.staff||[];
+  $('#staffList').innerHTML=st.length?st.map((s,i)=>`<div class="staffRow"><span class="grow">${esc(s.name)}</span><span class="small">${esc(s.role||'')}</span>${S.readOnly?'':`<button class="btn sm" data-i="${i}">Remove</button>`}</div>`).join(''):'<div class="small">No staff added yet. Add partners, managers, staff and articles so tasks can be assigned to them.</div>';
+  $('#staffList').querySelectorAll('button').forEach(b=>b.onclick=async()=>{const s=st[+b.dataset.i];if(!await confirmBox(`Remove ${s.name}? Their existing tasks keep the name.`,'Remove'))return;saveSettings({staff:st.filter((_,i)=>i!==+b.dataset.i)})});
+}
+async function saveSettings(patch){const next={firm:S.settings.firm||'',staff:S.settings.staff||[],...patch};await run('saveSettings',{...next,by:by()},'Saved')}
+$('#sFirmSave').onclick=()=>saveSettings({firm:$('#sFirm').value.trim()});
+$('#sAdd').onclick=()=>{const n=$('#sName').value.trim();if(!n){toast('Enter a name');return}const st=S.settings.staff||[];if(st.some(s=>s.name.toLowerCase()===n.toLowerCase())){toast('Already in the list');return}saveSettings({staff:[...st,{name:n,role:$('#sRole').value}]});$('#sName').value=''};
+$('#sName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#sAdd').click()});
+$('#exAll').onclick=()=>copyTasks([...S.tasks].sort(sortTasks));
+$('#exClients').onclick=()=>{const rows=sortedClients(true);copyText(tsv([['Client','Constitution','File no.','PAN','GSTIN','Contact','Phone','Email','Group','In-charge','Services','Active','Notes'],...rows.map(c=>[c.name,c.type,c.fileNo,c.pan,c.gstin,c.contact,c.phone,c.email,c.group,c.incharge,(c.services||[]).join(', '),c.active===false?'No':'Yes',c.notes])]),rows.length,'clients')};
+
+/* ---------------- me selector ---------------- */
+function fillMe(){const s=$('#meSel');s.innerHTML=`<option value="">— choose —</option>`+staffNames().map(n=>`<option${n===ME?' selected':''}>${esc(n)}</option>`).join('');if(ME&&!staffNames().includes(ME)&&S.got.s){s.innerHTML+=`<option selected>${esc(ME)}</option>`}}
+$('#meSel').onchange=e=>{ME=e.target.value;saveLS('catm_me',ME);fillFilterOptions();render()};
+
+/* ---------------- boot ---------------- */
+function afterData(){
+  S.clientMap=Object.fromEntries(S.clients.map(c=>[c.id,c]));
+  fillMe();fillFilterOptions();
+  // don't wipe modal; re-render current view
+  render();
+  if(S.lastSync)$('#syncNote').textContent='Synced '+S.lastSync.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' · refreshes every minute';
+  if(S.got.s&&!ME&&staffNames().length)showBanner('Choose your name in “I am” at the top so your updates are recorded against you.');
+}
+fillMe();fillFilterOptions();route();
+$('#refreshBtn').onclick=()=>{$('#syncNote').textContent='Refreshing…';refresh()};
+if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(WEB_APP_URL.trim())){$('#syncNote').textContent='Not connected';showBanner('Setup needed: paste your Apps Script web-app URL (ending in /exec) into WEB_APP_URL near the top of the script in index.html.')}
+else{
+  refresh();
+  setInterval(()=>{if(document.visibilityState==='visible'&&!document.querySelector('.mback'))refresh(true)},60000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh(true)});
+}
+</script>
+</body>
+</html>
