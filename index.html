@@ -280,6 +280,8 @@ button.gc{cursor:pointer}button.gc:hover{outline:2px solid var(--teal)}
 .pwrap{min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:40px 14px;background:linear-gradient(160deg,#0b2545 0%,#13315c 260px,#eef2f7 260px)}
 .pcard{background:#fff;border-radius:16px;width:min(680px,100%);padding:28px 28px 22px;box-shadow:0 24px 48px -12px rgba(16,24,40,.25)}
 .prow{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}
+.pnl,.pnh{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.6fr) minmax(0,1.35fr) 34px;gap:8px;margin-bottom:8px;align-items:center}.pnh{margin-bottom:4px}.pnl input,.pnl select{width:100%}
+@media (max-width:640px){.pnh{display:none}.pnl{grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;padding:8px}.pnl .plX{justify-self:end}}
 .msgs{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:8px}.msg{background:#f1f4f8;border-radius:10px;padding:8px 11px;max-width:85%;align-self:flex-start;font-size:13px}.msg.me{background:#e5f3f0;align-self:flex-end}.msg.int{background:#fff5e0}
 .lnkb{background:none;border:0;color:var(--teal);cursor:pointer;font:inherit;font-size:12.5px;padding:6px 0}
 a.btn{text-decoration:none;color:inherit}.btn.wa{background:#1fa855;border-color:#1fa855;color:#fff!important}.btn.wa:hover{background:#178a45}
@@ -365,7 +367,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
    PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES (it ends with /exec)
    ================================================================================= */
 const DEFAULT_FIRM='Patel Parth D & Associates';
-const UI_VERSION='8.8';
+const UI_VERSION='9.0';
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbywXUukgpnngf8Gj1D-2T2A2J-7qSz76Ep3a1Da5h-Ca3mJ2SwyTVjL1f9Vn1UnHLjdHg/exec';
 
 /* ---------------- constants ---------------- */
@@ -775,7 +777,7 @@ VIEWS.tasks={
     [...SEL].forEach(id=>{if(!rows.some(t=>t.id===id))SEL.delete(id)});
     $('#tb').innerHTML=rows.map(t=>{const own=t.assigneeId===D.me.id||t.reviewerId===D.me.id;const canSt=ed||own;
       return `<tr class="${isDone(t)?'dim':''}" data-id="${t.id}">${ed?`<td><input type="checkbox" class="rs" ${SEL.has(t.id)?'checked':''}></td>`:''}<td>${dueCell(t)}</td><td>${esc(cName(t.clientId))}${viaOf(t)?`<div class="sm" style="color:var(--purple)">via ${esc(cName(viaOf(t)))}</div>`:''}</td>
-      <td><span class="lnk">${esc(t.title)}</span>${scopePill(t)}${t.priority==='High'?' <span class="pr-High sm">● High</span>':''}${t.arn?`<div class="sm mut">ARN ${esc(t.arn)}</div>`:''}</td><td>${esc(t.category)}</td><td>${esc(t.period)}</td>
+      <td><span class="lnk">${esc(t.title)}</span>${scopePill(t)}${(t.subs||[]).length?` <span class="sm mut">+ ${t.subs.length} sub-task${t.subs.length>1?'s':''}</span>`:''}${t.priority==='High'?' <span class="pr-High sm">● High</span>':''}${t.arn?`<div class="sm mut">ARN ${esc(t.arn)}</div>`:''}</td><td>${esc(t.category)}</td><td>${esc(t.period)}</td>
       <td>${esc(uName(t.assigneeId))}</td><td>${t.reviewerId?esc(uName(t.reviewerId)):'<span class="mut">—</span>'}</td>
       <td>${canSt?`<select class="st ${ST_CLS[t.status]}">${opts(STATUSES,t.status)}</select>`:stPill(t.status)}</td><td class="num">${t.hours?r2(t.hours):''}</td>
       ${fees?`<td class="num">${Number(t.fees)>0?inr(t.fees,0):'<span class="mut">—</span>'}</td><td>${t.invoiceNo?pill(t.invoiceNo,'p-green'):(isDone(t)&&t.billable!==false?pill('Unbilled','p-amber'):(t.billable===false?'<span class="mut sm">Non-billable</span>':''))}</td>`:''}</tr>`}).join('');
@@ -1107,7 +1109,7 @@ function regRows(rows){return [['Invoice no.','Date','Client','Client GSTIN','Pl
 function invoiceBuilder(pre){
   const S=D.settings,gstOn=()=>gstOnDate($('#ivD')?$('#ivD').value:today()),rate=Number(S.gstRate||18),firmSt=String(S.firmStateCode||'27').padStart(2,'0');
   let st={clientId:pre.clientId||'',lines:[],exp:new Set(pre.expenseIds||[]),showAll:false};
-  const addTaskLine=t=>{if(st.lines.some(l=>l.taskId===t.id))return;st.lines.push({taskId:t.id,desc:(st.clientId&&t.clientId!==st.clientId?cName(t.clientId)+' – ':'')+t.title+(t.period?' – '+t.period:'')+(t.scope==='SIGN'?' (review & signing)':t.scope==='SIGNUDIN'?' (review & signing with UDIN)':''),sac:S.defaultSac||'9982',amount:Number(t.fees)||0})};
+  const addTaskLine=t=>{if(st.lines.some(l=>l.taskId===t.id))return;st.lines.push({taskId:t.id,desc:(st.clientId&&t.clientId!==st.clientId?cName(t.clientId)+' – ':'')+t.title+(t.period?' – '+t.period:'')+(t.scope==='SIGN'?' (review & signing)':t.scope==='SIGNUDIN'?' (review & signing with UDIN)':'')+((t.subs||[]).length?' incl. '+t.subs.map(x=>x.title+(x.period?' – '+x.period:'')).join(', '):''),sac:S.defaultSac||'9982',amount:Number(t.fees)||0})};
   if(pre.taskIds)pre.taskIds.forEach(id=>{const t=D.tasks.find(x=>x.id===id);if(t)addTaskLine(t)});
   const m=modal('New invoice',`<div id="ivb"></div>`,`<span class="sm mut">Invoice number is allotted automatically on saving (${esc(S.invoicePrefix||'INV')}/${fyLbl(fyStart())}/…)</span><span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="ivGo">Issue invoice</button>`,'wide');
   const draw=()=>{
@@ -1521,6 +1523,7 @@ const DOC_TPL={'GST':['Sales register / sales invoices','Purchase register / pur
  'Certification':['Supporting documents','Management representation','Draft certificate for approval'],
  'Accounting':['Bank statements','Sales & purchase bills','Expense vouchers','Cash book']};
 const UDIN_CATS=['Statutory Audit','Tax Audit','Certification','Transfer Pricing'];
+const PN_BUNDLES=[['ITR + Tax audit',['TAR','ITRA']],['GSTR-1 + GSTR-3B',['GSTR1','GSTR3B']],['Tax audit + ITR + GSTR-9',['TAR','ITRA','GSTR9']]];
 const SCOPES=[['','Full work (prepare & file)'],['SIGN','Sign only'],['SIGNUDIN','Sign + UDIN']];
 const scopeLbl=s=>s==='SIGN'?'Sign only':s==='SIGNUDIN'?'Sign + UDIN':'';
 const scopePill=t=>t&&t.scope?' '+pill(scopeLbl(t.scope),t.scope==='SIGNUDIN'?'p-amber':'p-purple'):'';
@@ -1562,8 +1565,18 @@ function taskExtras(t,canEd){
    ${ck.map((x,i)=>`<div class="ckr"><label><input type="checkbox" data-ck="${i}" ${x.done?'checked':''} ${canEd?'':'disabled'}> <span class="${x.done?'mut':''}" style="${x.done?'text-decoration:line-through':''}">${esc(x.item)}</span></label>${x.done&&x.at?`<span class="sm mut">received ${fD(String(x.at).slice(0,10))}</span>`:''}${canEd?`<button class="btn sm" data-ckrm="${i}">✕</button>`:''}</div>`).join('')||'<div class="mut sm">No checklist yet.</div>'}
    ${canEd?`<div class="bar" style="margin:8px 0 0"><input id="ckNew" placeholder="Add a document to the checklist…" style="flex:1 1 220px"><button class="btn sm" id="ckAdd">Add</button>${DOC_TPL[t.category]&&!ck.length?`<button class="btn sm" id="ckTpl">Load standard list (${esc(t.category)})</button>`:''}</div>`:''}
    ${msg?`<div style="margin-top:8px">${waBtn(c.phone,msg,'Ask client for pending documents')||'<span class="sm mut">Add the client’s mobile number to send a WhatsApp reminder.</span>'}</div>`:''}</div>
+   ${subsBlock(t)}
    ${msgsBlock(t,tcons)}
    ${filesBlock(t,canEd,!!tcons)}`;
+}
+function subsBlock(t){
+  const ss=t.subs||[],mgr=can('tasksEdit')&&!isViewer(),own=(t.assigneeId===D.me.id||t.reviewerId===D.me.id)&&!isViewer(),fees=can('fees');
+  return `<div class="sub"><h4>Sub-tasks (${ss.length})${ss.length?` <span class="sm mut" style="font-weight:400">${ss.filter(x=>x.done).length} done</span>`:''}</h4>
+   ${ss.map(x=>`<div class="ckrow" style="display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line)">${mgr||own?`<input type="checkbox" data-sd="${esc(x.id)}" ${x.done?'checked':''}>`:(x.done?'✓':'○')}
+     <div style="flex:1"><span style="${x.done?'text-decoration:line-through;color:var(--muted)':''}"><b>${esc(x.title)}</b>${x.period?' – '+esc(x.period):''}</span>${x.done?`<span class="sm mut"> · done ${fD(x.doneOn)}${x.arn?' · ARN '+esc(x.arn):''}</span>`:''}<div class="sm mut">Added by ${esc(uName(x.by))} · ${fDT(x.at)}</div></div>
+     ${!x.done&&(mgr||own)?`<input data-sa="${esc(x.id)}" placeholder="ARN (optional)" style="width:140px">`:''}${fees&&x.fee?`<span class="sm">₹ ${amt(x.fee)}</span>`:''}${mgr?`<button class="btn sm" data-sr="${esc(x.id)}" title="Remove">✕</button>`:''}</div>`).join('')||'<div class="sm mut">No sub-tasks.</div>'}
+   ${mgr?`<div class="bar" style="margin:8px 0 0;align-items:center;flex-wrap:wrap"><select id="sbR" style="flex:1 1 200px">${opts([['','Choose work…'],...TPL.map(x=>[x.code,x.name]),['__o','Other (type below)']],'')}</select><input id="sbT" placeholder="Sub-task, e.g. ITR – audit case" style="flex:2 1 220px"><input id="sbP" placeholder="Period" value="${esc(t.period||'')}" style="width:130px">${fees?`<input id="sbF" type="number" min="0" placeholder="Extra fee ₹" style="width:110px" ${t.invoiceId?'disabled title="Task already billed"':''}>`:''}<button class="btn" id="sbGo">+ Add sub-task</button></div>
+   <div class="sm mut" style="margin-top:4px">Sub-tasks stay inside this task (one status, billed together). The extra fee is added to this task’s fee. ${t.consultantId?'The consultant can see sub-tasks in their workspace.':''}</div>`:''}</div>`;
 }
 function msgsBlock(t,tcons){
   const ms=t.msgs||[];
@@ -1579,6 +1592,11 @@ function bindTaskExtras(m,t,canEd){
     const add=m.querySelector('#ckAdd');if(add)add.onclick=()=>{const v=m.querySelector('#ckNew').value.trim();if(!v)return;save(base().concat([{item:v,done:false}]))};
     const tp=m.querySelector('#ckTpl');if(tp)tp.onclick=()=>save(DOC_TPL[t.category].map(item=>({item,done:false})));
   }
+  const sr=m.querySelector('#sbR');if(sr)sr.onchange=()=>{const x=TPL.find(y=>y.code===sr.value);if(x)m.querySelector('#sbT').value=x.name;else if(sr.value==='__o'){m.querySelector('#sbT').value='';m.querySelector('#sbT').focus()}};
+  const sg=m.querySelector('#sbGo');if(sg)sg.onclick=async()=>{const ti=m.querySelector('#sbT').value.trim();if(!ti){toast('Describe the sub-task',true);return}const fe=m.querySelector('#sbF');sg.disabled=true;
+    const r=await run('subTask',{taskId:t.id,op:'add',sub:{title:ti,period:m.querySelector('#sbP').value,fee:fe?fe.value:0}},'Sub-task added');sg.disabled=false;if(r)taskModal(t.id)};
+  $$('[data-sd]',m).forEach(b=>b.onchange=async()=>{const a=m.querySelector(`[data-sa="${b.dataset.sd}"]`);const r=await run('subTask',{taskId:t.id,op:b.checked?'done':'undo',subId:b.dataset.sd,arn:a?a.value:''},b.checked?'Sub-task completed':'Sub-task reopened');if(r)taskModal(t.id);else b.checked=!b.checked});
+  $$('[data-sr]',m).forEach(b=>b.onclick=async()=>{const sx=(t.subs||[]).find(x=>x.id===b.dataset.sr)||{};if(!(await confirmBox('Remove the sub-task “'+esc(sx.title||'')+'”?'+(sx.fee?' Its fee will be taken off this task.':''),'Remove'))){taskModal(t.id);return}const r=await run('subTask',{taskId:t.id,op:'remove',subId:b.dataset.sr},'Sub-task removed');if(r)taskModal(t.id)});
   const tg=m.querySelector('#tmGo');if(tg)tg.onclick=async()=>{const x=m.querySelector('#tmT').value.trim();if(!x){toast('Type a message',true);return}const v=m.querySelector('#tmV'),vis=!!(v&&v.checked);tg.disabled=true;const r=await run('taskMessage',{taskId:t.id,text:x,vis},vis?'Sent to consultant':'Note added');tg.disabled=false;if(r)taskModal(t.id)};
   bindFiles(m,'Tasks',t,()=>taskModal(t.id));
 }
@@ -2320,19 +2338,20 @@ async function renderPortal(){
   }
   else if(cur==='new'){const pre=el.dataset.nc||'',preR=el.dataset.nr||'',preK=el.dataset.nk||'';el.dataset.nc='';el.dataset.nr='';el.dataset.nk='';body=`<div class="f" id="pnf" style="margin-top:14px">
      <label class="s2">Client *<select id="pnC">${opts([['','— Select your client —'],...(info.clients||[]).map(c=>[c.id,c.name]),['__new','+ New client (not in the list)']],pre)}</select></label>
-     <label>Return / compliance<select id="pnR">${opts([['','Other work (describe below)'],...TPL.map(t=>[t.code,t.name])],preR)}</select></label><label id="pnKL">Period<span id="pnKB" data-pre="${esc(preK)}"></span></label>
-     <div class="s2"><div class="sm" style="font-weight:600;margin-bottom:6px">What do you need from us? *</div><div style="display:flex;gap:10px;flex-wrap:wrap">${SCOPES.map(([k,l],i)=>`<label class="chk" style="border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer"><input type="radio" name="pnS" value="${k}" ${i===0?'checked':''}> ${l}</label>`).join('')}</div><div class="sm mut" id="pnSN" style="margin-top:6px"></div></div>
      <label class="pnN s2" style="display:none">New client name *<input id="pnNm" placeholder="As per PAN"></label><label class="pnN" style="display:none">PAN<input id="pnPan" maxlength="10" style="text-transform:uppercase"></label><label class="pnN" style="display:none">GSTIN<input id="pnG" maxlength="15" style="text-transform:uppercase"></label>
-     <label class="s2 pnO">Work required *<input id="pnT" placeholder="e.g. Reply to notice u/s 143(2) / Project report / Net-worth certificate"></label>
-     <label class="pnO">Type of work<select id="pnCat">${opts(CATEGORIES,'Other')}</select></label><label class="pnO">Period / AY / FY<input id="pnP" placeholder="e.g. FY 2025-26"></label>
+     <div class="s2"><div class="sm" style="font-weight:600;margin-bottom:6px">Work required * <span class="mut" style="font-weight:400">– one line for each return / work</span></div>
+      <div class="pnh sm mut"><span>Return / work</span><span>Period / description</span><span>What you need from us</span><span></span></div>
+      <div id="pnLines"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px"><button type="button" class="btn sm" id="pnAdd">+ Add another work</button><span class="sm mut" style="margin-left:6px">Quick add:</span>${PN_BUNDLES.map((x,i)=>`<button type="button" class="btn sm" data-pb="${i}">${esc(x[0])}</button>`).join('')}</div>
+      <div class="sm mut" id="pnSN" style="margin-top:8px"></div></div>
      <label>Required by<input type="date" id="pnD"></label><label>Attach a document (optional)<input type="file" id="pnF"></label>
      <label class="s2">Notes for us<textarea id="pnNo" rows="3" placeholder="Any instructions, contact person, login availability…"></textarea></label></div>
-     <div class="bar" style="margin-top:12px"><span class="grow"></span><button class="btn pri" id="pnGo">Send work to ${esc(firm)}</button></div>`}
+     <div class="bar" style="margin-top:12px"><span class="grow"></span><button class="btn pri" id="pnGo">Send work to ${esc(firm)}</button></div>`;el._pnInit=[{code:preR,key:preK,scope:''}]}
   else if(cur==='work'){
     const cf=el.dataset.cf||'',ws=el.dataset.ws||(sess?'open':'all'),fees=sess&&info.feesPerTask;
     const list=W.filter(w=>(!cf||w.clientId===cf)&&(ws==='all'||(ws==='open')===(w.status!=='Completed')));
     body=(sess?`<div class="bar" style="margin:14px 0 8px"><select id="pwC">${opts([['','All clients'],...(info.clients||[]).map(c=>[c.id,c.name])],cf)}</select><select id="pwS">${opts([['open','Open work'],['done','Completed (last 12 months)'],['all','All']],ws)}</select><span class="grow"></span><span class="sm mut">${list.length} item(s)</span></div>`:'')+
-     (list.length?`<div class="tw" style="box-shadow:none"><table class="t"><thead><tr><th>Client</th><th>Work</th><th>Due</th><th>Status</th>${fees?'<th class="num">Fee (₹)</th>':''}<th>Bill</th>${sess?'<th></th>':''}</tr></thead><tbody>${list.map(w=>`<tr><td>${esc(w.client)}</td><td>${esc(w.title)}${w.scope?' '+pill(scopeLbl(w.scope),w.scope==='SIGNUDIN'?'p-amber':'p-purple'):''} <span class="mut sm">${esc(w.period)}</span>${w.pending?`<div class="sm soon">${w.pending} document(s) awaited</div>`:''}${w.arn?`<div class="sm mut">ARN / Ack. ${esc(w.arn)}</div>`:''}${sess&&w.incharge?`<div class="sm mut">Handled by ${esc(w.incharge)}</div>`:''}${(w.files||[]).length?`<div class="sm">${w.files.map(f=>`<span class="lnk" data-fd="${esc(w.id)}|${esc(f.id)}">📄 ${esc(f.name)}</span>`).join(' · ')}</div>`:''}</td><td class="${w.status!=='Completed'&&w.due&&days(w.due)<0?'over':''}">${w.due?fD(w.due):'—'}</td><td>${pill(stl(w.status),stc(w.status))}${w.completedOn?`<div class="sm mut">${fD(w.completedOn)}</div>`:''}</td>${fees?`<td class="num">${w.fee!=null?amt(w.fee):'—'}</td>`:''}<td class="sm">${esc(w.invoiceNo||'')}</td>${sess?`<td><button class="btn sm" data-msg="${esc(w.id)}" title="Messages">💬${(w.msgs||[]).length?' '+w.msgs.length:''}</button></td>`:''}</tr>`).join('')}</tbody></table></div>`:'<div class="empty">No work in this view.</div>');
+     (list.length?`<div class="tw" style="box-shadow:none"><table class="t"><thead><tr><th>Client</th><th>Work</th><th>Due</th><th>Status</th>${fees?'<th class="num">Fee (₹)</th>':''}<th>Bill</th>${sess?'<th></th>':''}</tr></thead><tbody>${list.map(w=>`<tr><td>${esc(w.client)}</td><td>${esc(w.title)}${w.scope?' '+pill(scopeLbl(w.scope),w.scope==='SIGNUDIN'?'p-amber':'p-purple'):''} <span class="mut sm">${esc(w.period)}</span>${(w.subs||[]).length?`<div class="sm" style="margin-top:3px">Includes: ${w.subs.map(x=>`<span style="white-space:nowrap">${x.done?'✓':'○'} ${esc(x.title)}${x.period?' – '+esc(x.period):''}${x.arn?' (ARN '+esc(x.arn)+')':''}${x.fee!=null&&info.feesPerTask?' · ₹'+amt(x.fee):''}</span>`).join(' · ')}</div>`:''}${w.pending?`<div class="sm soon">${w.pending} document(s) awaited</div>`:''}${w.arn?`<div class="sm mut">ARN / Ack. ${esc(w.arn)}</div>`:''}${sess&&w.incharge?`<div class="sm mut">Handled by ${esc(w.incharge)}</div>`:''}${(w.files||[]).length?`<div class="sm">${w.files.map(f=>`<span class="lnk" data-fd="${esc(w.id)}|${esc(f.id)}">📄 ${esc(f.name)}</span>`).join(' · ')}</div>`:''}</td><td class="${w.status!=='Completed'&&w.due&&days(w.due)<0?'over':''}">${w.due?fD(w.due):'—'}</td><td>${pill(stl(w.status),stc(w.status))}${w.completedOn?`<div class="sm mut">${fD(w.completedOn)}</div>`:''}</td>${fees?`<td class="num">${w.fee!=null?amt(w.fee):'—'}</td>`:''}<td class="sm">${esc(w.invoiceNo||'')}</td>${sess?`<td><button class="btn sm" data-msg="${esc(w.id)}" title="Messages">💬${(w.msgs||[]).length?' '+w.msgs.length:''}</button></td>`:''}</tr>`).join('')}</tbody></table></div>`:'<div class="empty">No work in this view.</div>');
   }
   else if(cur==='grid'){
     const type=GRID_TYPES.find(x=>x.k===(el.dataset.gt||'GSTR3B'))||GRID_TYPES[1],ann=type.f==='A',fy=+(el.dataset.gfy||(ann?fyStart()-1:fyStart()));
@@ -2377,12 +2396,22 @@ async function renderPortal(){
     if(x.task){if((info.work||[]).some(w=>w.id===x.task.id))consMsgModal(x.task.id);else toast(`${x.t.name} · ${x.task.period||''}: ${G_TIP[x.s]}${x.task.completedOn&&x.s==='ok'?' on '+fD(x.task.completedOn):''}${x.task.arn?' · ARN '+x.task.arn:''}`);return}
     el.dataset.nc=x.c.id;el.dataset.nr=x.code;el.dataset.nk=x.per.key;el.dataset.tab='new';renderPortal()});
   $$('#pgWrap [data-gc]').forEach(a=>a.onclick=()=>{el.dataset.cf=a.dataset.gc;el.dataset.ws='all';el.dataset.tab='work';renderPortal()});
-  const pr=$('#pnR');if(pr){const kb=$('#pnKB'),pre=kb.dataset.pre;const per=()=>{const t=TPL.find(x=>x.code===pr.value);$$('#portal .pnO').forEach(x=>x.style.display=t?'none':'');$('#pnKL').style.display=t?'':'none';if(!t){kb.innerHTML='';return}
-      const fy=fyStart(),d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);const lm=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;
-      if(t.freq==='M')kb.innerHTML=`<input type="month" id="pnK" value="${esc(pre&&/^\d{4}-\d{2}$/.test(pre)?pre:lm)}">`;
-      else if(t.freq==='Q')kb.innerHTML=`<select id="pnK">${opts([fy,fy-1].flatMap(y=>[4,3,2,1].map(q=>[fyLong(y)+'-Q'+q,'Q'+q+' FY '+fyLong(y)])),pre||'')}</select>`;
-      else kb.innerHTML=`<select id="pnK">${opts([fy-1,fy,fy-2].map(y=>[fyLong(y),'FY '+fyLong(y)+' (AY '+fyLong(y+1)+')']),pre||fyLong(fy-1))}</select>`};pr.onchange=per;per()}
-  $$('#portal [name=pnS]').forEach(r=>r.onchange=()=>{const v=($('[name=pnS]:checked')||{}).value;$('#pnSN').innerHTML=v==='SIGN'?'You prepare the working / return; we review and sign. Please upload the draft computation, 26AS/AIS and documents to be signed.':v==='SIGNUDIN'?'We review, sign and generate UDIN. Please upload the financial statements / document to be signed and the management representation letter.':''});
+  const pl=$('#pnLines');if(pl){
+    const per=(row,pre)=>{const code=row.querySelector('.plR').value,t=TPL.find(x=>x.code===code),k=row.querySelector('.plK'),fy=fyStart(),d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);const lm=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+      if(!t)k.innerHTML=`<input class="plT" placeholder="Describe, e.g. Net-worth certificate / Notice reply">`;
+      else if(t.freq==='M')k.innerHTML=`<input type="month" value="${esc(pre&&/^\d{4}-\d{2}$/.test(pre)?pre:lm)}">`;
+      else if(t.freq==='Q')k.innerHTML=`<select>${opts([fy,fy-1].flatMap(y=>[4,3,2,1].map(q=>[fyLong(y)+'-Q'+q,'Q'+q+' FY '+fyLong(y)])),pre||'')}</select>`;
+      else k.innerHTML=`<select>${opts([fy-1,fy,fy-2].map(y=>[fyLong(y),'FY '+fyLong(y)+' (AY '+fyLong(y+1)+')']),pre||fyLong(fy-1))}</select>`};
+    const note=()=>{const v=$$('#pnLines .plS').map(x=>x.value);$('#pnSN').innerHTML=(v.includes('SIGN')?'<div>• <b>Sign only</b>: you prepare the working / return; we review and sign. Upload the draft computation, 26AS/AIS and documents to be signed.</div>':'')+(v.includes('SIGNUDIN')?'<div>• <b>Sign + UDIN</b>: we review, sign and generate UDIN. Upload the financial statements / document to be signed and the management representation letter.</div>':'')};
+    const add=ln=>{const r=document.createElement('div');r.className='pnl';r.innerHTML=`<select class="plR">${opts([['','Other work (describe)'],...TPL.map(t=>[t.code,t.name])],ln.code||'')}</select><span class="plK"></span><select class="plS">${opts(SCOPES,ln.scope||'')}</select><button type="button" class="btn sm plX" title="Remove this line">✕</button>`;
+      pl.appendChild(r);per(r,ln.key);r.querySelector('.plR').onchange=()=>per(r,'');r.querySelector('.plS').onchange=note;
+      r.querySelector('.plX').onclick=()=>{if($$('#pnLines .pnl').length>1){r.remove();note()}else toast('At least one line is needed',true)};note()};
+    (el._pnInit||[{}]).forEach(add);el._pnInit=null;
+    $('#pnAdd').onclick=()=>{const last=$$('#pnLines .pnl').pop();add({code:'',scope:last?last.querySelector('.plS').value:''})};
+    $$('#portal [data-pb]').forEach(b=>b.onclick=()=>{const rows=$$('#pnLines .pnl'),firstKey=(rows[0]&&rows[0].querySelector('.plK select,.plK input:not(.plT)')||{}).value||'';
+      if(rows.length===1&&!rows[0].querySelector('.plR').value&&!((rows[0].querySelector('.plT')||{}).value||'').trim())rows[0].remove();
+      PN_BUNDLES[+b.dataset.pb][1].forEach(code=>{const t=TPL.find(x=>x.code===code);add({code,key:t&&t.freq==='A'&&/^\d{4}-\d{2}$/.test(firstKey)?firstKey:''})})});
+  }
   const pc=$('#pnC');if(pc){const tg=()=>$$('#portal .pnN').forEach(x=>x.style.display=pc.value==='__new'?'flex':'none');pc.onchange=tg;tg()}
   $$('#portal [data-msg]').forEach(b=>b.onclick=()=>consMsgModal(b.dataset.msg));
   $$('#portal [data-fd]').forEach(a=>a.onclick=()=>{const [t,f]=a.dataset.fd.split('|');if(sess)consFile(t,f);else toast('Sign in to download documents',true)});
@@ -2398,12 +2427,20 @@ async function renderPortal(){
   showInstall();
   const go=$('#pnGo');if(go)go.onclick=async()=>{
     const cid=$('#pnC').value,f=$('#pnF').files[0];
-    const rc=$('#pnR')?$('#pnR').value:'';if(!cid){toast('Select your client',true);return}if(!rc&&!$('#pnT').value.trim()){toast('Describe the work required',true);return}if(rc&&!($('#pnK')&&$('#pnK').value)){toast('Choose the period',true);return}
+    if(!cid){toast('Select your client',true);return}
+    if(cid==='__new'&&!$('#pnNm').value.trim()){toast('Type the new client’s name',true);return}
+    const items=[];let bad='';
+    $$('#pnLines .pnl').forEach((r,i)=>{const code=r.querySelector('.plR').value,sc=r.querySelector('.plS').value;
+      if(code){const k=r.querySelector('.plK select,.plK input');if(!k||!k.value){bad=bad||`Line ${i+1}: choose the period`;return}items.push({code,periodKey:k.value,scope:sc})}
+      else{const t=((r.querySelector('.plT')||{}).value||'').trim();if(!t){bad=bad||`Line ${i+1}: choose the return or describe the work`;return}items.push({title:t,scope:sc,category:'Other'})}});
+    if(bad){toast(bad,true);return}
+    const keys=items.map(x=>x.code?x.code+'|'+x.periodKey:'T|'+x.title.toLowerCase());if(new Set(keys).size<keys.length){toast('The same work is listed twice',true);return}
     if(f&&f.size>10*1024*1024){toast('File is larger than 10 MB',true);return}
     go.disabled=true;go.textContent='Sending…';busy(true);
-    try{const p={clientId:cid==='__new'?'':cid,newClient:cid==='__new'?$('#pnNm').value:'',pan:$('#pnPan').value,gstin:$('#pnG').value,title:$('#pnT').value,category:$('#pnCat').value,period:$('#pnP').value,dueDate:$('#pnD').value,notes:$('#pnNo').value,code:rc,periodKey:rc?$('#pnK').value:'',scope:($('[name=pnS]:checked')||{}).value||''};
+    try{const p={clientId:cid==='__new'?'':cid,newClient:cid==='__new'?$('#pnNm').value:'',pan:$('#pnPan').value,gstin:$('#pnG').value,dueDate:$('#pnD').value,notes:$('#pnNo').value,items};
       if(f){p.data=await b64file(f);p.name=f.name;p.mime=f.type}
-      const r=await pcall('Submit',p);el.dataset.tab='work';el.dataset.cf='';el.dataset.ws=sess?'open':'all';await renderPortal();msg(r.existing?`<span style="color:var(--blue)">ℹ ${esc(r.client)} – ${esc(r.title)} is already with us (status: ${esc(r.status)}). Your note / document has been added to it.</span>`:`<span style="color:var(--green)">✓ Received: ${esc(r.client)} – ${esc(r.title)}. We will confirm shortly.</span>`)}
+      const r=await pcall('Submit',p);el.dataset.tab='work';el.dataset.cf='';el.dataset.ws=sess?'open':'all';await renderPortal();
+      const L=r.lines||[r];msg(`<b>${esc(r.client)}</b> – ${L.length} work item(s):<br>`+L.map(l=>l.existing?`<span style="color:var(--blue)">ℹ ${esc(l.title)} – already with us (status: ${esc(l.status)}); your note / document has been added.</span>`:`<span style="color:var(--green)">✓ ${esc(l.title)} – received.</span>`).join('<br>'))}
     catch(e){msg('<span class="over">'+esc(errMsg(e))+'</span>');go.disabled=false;go.textContent='Send work';if(sess&&/AUTH_REQUIRED|PASSWORD_CHANGE/.test(errMsg(e)))handleErr(e)}finally{busy(false)}};
 }
 /* ---------------- compliance grid (v8.6) ---------------- */
