@@ -231,6 +231,7 @@ select.st{padding:3px 6px;font-size:12px;border-radius:999px;font-weight:600;bor
   #portal .tabs{overflow-x:auto;flex-wrap:nowrap;white-space:nowrap}
 }
 @media (display-mode:standalone){.instBtn{display:none!important}}
+@media (max-width:640px){table.cgrid .cn{min-width:118px;max-width:140px;padding-left:8px}table.cgrid .cn .sm{display:none}.gc{width:24px;height:24px}}
 #busy{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:95;transition:width .4s}
 #busy.on{width:70%}
 /* ---------- documents (invoice/receipt/statement) ---------- */
@@ -248,11 +249,21 @@ select.st{padding:3px 6px;font-size:12px;border-radius:999px;font-weight:600;bor
 .doc .wm{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:72px;font-weight:800;color:rgba(180,35,24,.15);pointer-events:none}
 .doc .sig{text-align:right;margin-top:30px}
 .doc .small{font-size:11px;color:#444}
+table.cgrid{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.cgrid th,table.cgrid td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+table.cgrid th{background:var(--soft);color:var(--muted);font-weight:600;font-size:11.5px;position:sticky;top:0;z-index:1}
+table.cgrid .cn{text-align:left;position:sticky;left:0;background:#fff;z-index:2;min-width:170px;max-width:230px;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line);padding-left:12px}
+table.cgrid th.cn{background:var(--soft);z-index:3}table.cgrid tfoot td{background:var(--soft);font-weight:600}
+.gc{display:inline-flex;width:28px;height:26px;border-radius:6px;align-items:center;justify-content:center;font-size:14px;border:0;background:transparent;color:var(--muted);cursor:default;font-family:inherit}
+button.gc{cursor:pointer}button.gc:hover{outline:2px solid var(--teal)}
+.cvia{color:var(--amber);font-weight:600}
+.gc.ok{background:var(--greenSoft);color:var(--green);font-weight:700}.gc.ip{background:var(--blueSoft);color:var(--blue)}.gc.od{background:var(--redSoft);color:var(--red);font-weight:700}.gc.nd{background:var(--graySoft);color:var(--gray)}
 .doc,.doc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .doc::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#0b2545 0 62%,#f58220 62% 81%,#2e9b47 81% 100%)}
 .doc .firm{font-size:21px;letter-spacing:.2px}
 .doc .firmsub{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:#0e7c86;font-weight:700;margin:1px 0 4px}
 .doc .dt .ttl{font-size:20px;letter-spacing:3px}
+.doc .dh>div:first-child{flex:1;min-width:0}.doc .dt{flex:0 0 auto}.doc .dmeta td{white-space:nowrap}
 .doc .dmeta{width:auto;margin:8px 0 0 auto}.doc .dmeta td{border:0;padding:2px 0 2px 14px;text-align:right;font-size:12px;background:none!important}.doc .dmeta td:first-child{color:#555}
 .doc .lbl{font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:#0e7c86;font-weight:700;margin-bottom:4px}
 .doc th{background:#0b2545;color:#fff;border-color:#0b2545;letter-spacing:.3px}
@@ -354,7 +365,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
    PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES (it ends with /exec)
    ================================================================================= */
 const DEFAULT_FIRM='Patel Parth D & Associates';
-const UI_VERSION='8.5';
+const UI_VERSION='8.8';
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbywXUukgpnngf8Gj1D-2T2A2J-7qSz76Ep3a1Da5h-Ca3mJ2SwyTVjL1f9Vn1UnHLjdHg/exec';
 
 /* ---------------- constants ---------------- */
@@ -406,7 +417,7 @@ const TPL=[
  {code:'STAUD',name:'Statutory audit – sign-off (internal target)',cat:'Statutory Audit',freq:'A',a:[9,1,1],svc:['Statutory Audit'],ref:MCA_U,note:'Internal target, not statutory.'},
 ];
 const ICON={dashboard:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',tasks:'M9 11l3 3 8-8M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9',board:'M3 3h5v18H3zM10 3h5v12h-5zM17 3h4v8h-4z',
- clients:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',calendar:'M3 5h18v16H3zM16 3v4M8 3v4M3 10h18',
+ clients:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',calendar:'M3 5h18v16H3zM16 3v4M8 3v4M3 10h18',grid:'M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18',
  expenses:'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6',invoices:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8',receipts:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3',
  reports:'M18 20V10M12 20V4M6 20v-6',users:'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM19 8v6M22 11h-6',settings:'M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z',
  audit:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
@@ -414,7 +425,7 @@ const ICON={dashboard:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',tasks
  retainers:'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3',udin:'M12 15a7 7 0 100-14 7 7 0 000 14zM8.2 13.9L7 23l5-3 5 3-1.2-9.1',
  dsc:'M15.5 7.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM12 11v11M12 17h4M12 20h3',vault:'M5 11h14v10H5zM8 11V7a4 4 0 018 0v4M12 15v2',consultants:'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM17 11l2 2 4-4',exports:'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5',yearend:'M3 5h18v16H3zM16 3v4M8 3v4M3 10h18M8 15l3 3 5-6',import:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12'};
 const NAV=[
- {g:'Work'},{v:'dashboard',l:'Dashboard'},{v:'tasks',l:'Tasks'},{v:'board',l:'Workflow board'},{v:'calendar',l:'Compliance calendar',p:'generator'},{v:'notices',l:'Notices & litigation'},{v:'leave',l:'Leave & capacity'},
+ {g:'Work'},{v:'dashboard',l:'Dashboard'},{v:'tasks',l:'Tasks'},{v:'board',l:'Workflow board'},{v:'calendar',l:'Compliance calendar',p:'generator'},{v:'grid',l:'Compliance grid'},{v:'notices',l:'Notices & litigation'},{v:'leave',l:'Leave & capacity'},
  {g:'Clients & billing'},{v:'clients',l:'Clients'},{v:'consultants',l:'Consultants'},{v:'expenses',l:'Expenses & claims'},{v:'invoices',l:'Invoices',p:'billView'},{v:'retainers',l:'Retainer billing',p:'billEdit'},{v:'receipts',l:'Receipts',p:'billView'},{v:'reports',l:'Reports',p:'billView'},{v:'exports',l:'Tally, GSTR-1 & TDS',p:'billView'},
  {g:'Registers'},{v:'udin',l:'UDIN register',p:'udinView'},{v:'dsc',l:'DSC register'},{v:'vault',l:'Credentials vault',p:'vault'},
  {g:'Administration',p:'audit'},{v:'users',l:'Users & roles',p:'users'},{v:'settings',l:'Firm settings',p:'settings'},{v:'import',l:'Import data',p:'users'},{v:'yearend',l:'Year-end close',p:'settings'},{v:'audit',l:'Audit trail',p:'audit'}];
@@ -567,7 +578,7 @@ $('#lform').addEventListener('submit',async ev=>{
   catch(e){const m=errMsg(e);$('#lerr').textContent=m==='Failed to fetch'?'Cannot reach the server. Check the web-app URL and your connection.':m}
   finally{$('#lbtn').disabled=false;$('#lbtn').textContent=OTPID?'Verify code →':'Sign in →'}
 });
-function signOutLocal(msg){if(typeof VKEY!=='undefined'){VKEY=null}TOKEN='';lsSet('pm_token','');D=null;closeModal();showLogin(msg)}
+function signOutLocal(msg){if(typeof VKEY!=='undefined'){VKEY=null}TOKEN='';lsSet('pm_token','');D=null;CUR=null;const vw=$('#view');if(vw)vw.innerHTML='';closeModal();showLogin(msg)}
 async function signOut(){try{await call('logout')}catch(e){}signOutLocal('You have signed out.')}
 const initials=s=>String(s||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
 
@@ -576,7 +587,7 @@ function showApp(){
   $('#login').classList.add('hidden');$('#app').classList.remove('hidden');
   $('#sFirm').textContent=D.settings.firmName||DEFAULT_FIRM;document.title=(D.settings.firmName?D.settings.firmName+' · ':'')+'Practice Manager';
   $('#av').textContent=initials(D.me.name);$('#uNm').textContent=D.me.name;$('#uRl').textContent=ROLE_LABEL[D.me.role];
-  const sv=D.serverVersion||'?';$('#sFoot').innerHTML=esc('Signed in as '+D.me.username)+'<br>Version '+(sv===UI_VERSION?'<b>v'+UI_VERSION+'</b> ✓':'screens <b>v'+UI_VERSION+'</b> · server <b>v'+esc(sv)+'</b> <span style="color:#ffb4a8">⚠ update '+(sv<UI_VERSION?'Code.gs':'index.html')+'</span>');
+  const sv=D.serverVersion||'?',uv2=UI_VERSION.split('.').slice(0,2).join('.');$('#sFoot').innerHTML=esc('Signed in as '+D.me.username)+'<br>Version '+(sv===uv2?'<b>v'+UI_VERSION+'</b> ✓':'screens <b>v'+UI_VERSION+'</b> · server <b>v'+esc(sv)+'</b> <span style="color:#ffb4a8">⚠ update '+(sv<uv2?'Code.gs':'index.html')+'</span>');
   $('#sync').textContent='Synced '+lastSync.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   document.body.classList.toggle('viewer',isViewer());
   let vb=$('#vbanner');if(isViewer()&&!vb){vb=document.createElement('div');vb.id='vbanner';vb.className='vbanner';vb.textContent='👁 View-only Admin – you can see every report, register and invoice. Changes are made by the Super Admin.';$('.top').after(vb)}else if(!isViewer()&&vb)vb.remove();
@@ -764,7 +775,7 @@ VIEWS.tasks={
     [...SEL].forEach(id=>{if(!rows.some(t=>t.id===id))SEL.delete(id)});
     $('#tb').innerHTML=rows.map(t=>{const own=t.assigneeId===D.me.id||t.reviewerId===D.me.id;const canSt=ed||own;
       return `<tr class="${isDone(t)?'dim':''}" data-id="${t.id}">${ed?`<td><input type="checkbox" class="rs" ${SEL.has(t.id)?'checked':''}></td>`:''}<td>${dueCell(t)}</td><td>${esc(cName(t.clientId))}${viaOf(t)?`<div class="sm" style="color:var(--purple)">via ${esc(cName(viaOf(t)))}</div>`:''}</td>
-      <td><span class="lnk">${esc(t.title)}</span>${t.priority==='High'?' <span class="pr-High sm">● High</span>':''}${t.arn?`<div class="sm mut">ARN ${esc(t.arn)}</div>`:''}</td><td>${esc(t.category)}</td><td>${esc(t.period)}</td>
+      <td><span class="lnk">${esc(t.title)}</span>${scopePill(t)}${t.priority==='High'?' <span class="pr-High sm">● High</span>':''}${t.arn?`<div class="sm mut">ARN ${esc(t.arn)}</div>`:''}</td><td>${esc(t.category)}</td><td>${esc(t.period)}</td>
       <td>${esc(uName(t.assigneeId))}</td><td>${t.reviewerId?esc(uName(t.reviewerId)):'<span class="mut">—</span>'}</td>
       <td>${canSt?`<select class="st ${ST_CLS[t.status]}">${opts(STATUSES,t.status)}</select>`:stPill(t.status)}</td><td class="num">${t.hours?r2(t.hours):''}</td>
       ${fees?`<td class="num">${Number(t.fees)>0?inr(t.fees,0):'<span class="mut">—</span>'}</td><td>${t.invoiceNo?pill(t.invoiceNo,'p-green'):(isDone(t)&&t.billable!==false?pill('Unbilled','p-amber'):(t.billable===false?'<span class="mut sm">Non-billable</span>':''))}</td>`:''}</tr>`}).join('');
@@ -804,7 +815,7 @@ VIEWS.board={
     const rows=filterTasks(true);
     $('#bd').innerHTML=STATUSES.map(s=>{const a=rows.filter(t=>t.status===s);const sh=s==='Completed'?a.slice(0,25):a;
       return `<div class="col" data-s="${s}"><h4>${stPill(s)}<span class="mut">${a.length}</span></h4>${sh.map(t=>{const mv=can('tasksEdit')||t.assigneeId===D.me.id||t.reviewerId===D.me.id;
-        return `<div class="kc" draggable="${mv}" data-id="${t.id}"><div class="c">${esc(cName(t.clientId))}</div><div class="tt">${esc(t.title)}${t.period?` <span class="mut sm">· ${esc(t.period)}</span>`:''}</div><div class="m"><span>${t.dueDate?dueCell(t):''}</span><span>${esc(uName(t.assigneeId))}</span></div></div>`}).join('')}${s==='Completed'&&a.length>25?'<div class="sm mut">Latest 25 shown</div>':''}</div>`}).join('');
+        return `<div class="kc" draggable="${mv}" data-id="${t.id}"><div class="c">${esc(cName(t.clientId))}</div><div class="tt">${esc(t.title)}${scopePill(t)}${t.period?` <span class="mut sm">· ${esc(t.period)}</span>`:''}</div><div class="m"><span>${t.dueDate?dueCell(t):''}</span><span>${esc(uName(t.assigneeId))}</span></div></div>`}).join('')}${s==='Completed'&&a.length>25?'<div class="sm mut">Latest 25 shown</div>':''}</div>`}).join('');
     $$('#bd .kc').forEach(c=>{c.onclick=()=>taskModal(c.dataset.id);c.ondragstart=e=>e.dataTransfer.setData('text/plain',c.dataset.id)});
     $$('#bd .col').forEach(col=>{col.ondragover=e=>{e.preventDefault();col.classList.add('ov')};col.ondragleave=()=>col.classList.remove('ov');col.ondrop=e=>{e.preventDefault();col.classList.remove('ov');const id=e.dataTransfer.getData('text/plain');if(id)setStatus(id,col.dataset.s)}});
   }
@@ -835,7 +846,7 @@ function taskModal(id,preset={}){
    ${fees?`<label>Professional fees (₹, excl. GST)<input type="number" min="0" step="1" name="fees" value="${esc(v.fees??'')}" ${dFee}></label>
    <label class="chk" style="margin-top:18px"><input type="checkbox" name="billable" ${v.billable!==false?'checked':''} ${dFee}> Billable to client</label>`:''}
    <label class="s2">Remarks<textarea name="remarks" rows="2" ${dOwn}>${esc(v.remarks)}</textarea></label>
-   ${ed?`<label>Budgeted hours<input type="number" min="0" step="0.5" name="budgetHours" value="${esc(v.budgetHours||'')}"></label><label class="chk" style="margin-top:18px"><input type="checkbox" name="udinRequired" ${v.udinRequired?'checked':''}> UDIN required (attest / certificate)</label>`:''}
+   ${ed?`<label>Scope of work<select name="scope">${opts(SCOPES,v.scope||'')}</select></label><label>Budgeted hours<input type="number" min="0" step="0.5" name="budgetHours" value="${esc(v.budgetHours||'')}"></label><label class="chk" style="margin-top:18px"><input type="checkbox" name="udinRequired" ${v.udinRequired?'checked':''}> UDIN required (attest / certificate)</label>`:''}
   </form>
   ${locked?`<div class="note">Billed in <b>${esc(t.invoiceNo)}</b> — fees are locked. Cancel the invoice to change them.</div>`:''}
   ${t&&t.reviewerId&&!ed&&t.reviewerId!==D.me.id?`<div class="note">This task needs sign-off by <b>${esc(uName(t.reviewerId))}</b>. When your work is done, set the status to <b>Under Review</b>.</div>`:''}
@@ -847,7 +858,8 @@ function taskModal(id,preset={}){
   const remA=t&&ed&&!isDone(t)&&t.assigneeId&&t.assigneeId!==D.me.id?remindBtns(U[t.assigneeId],[t],false,'Remind '+uName(t.assigneeId).split(' ')[0]):'';
   const remR=t&&(ed||t.assigneeId===D.me.id)&&t.status==='Under Review'&&t.reviewerId&&t.reviewerId!==D.me.id?remindBtns(U[t.reviewerId],[t],true,'Remind reviewer'):'';
   const foot=`${t&&ed&&!locked?'<button class="btn dan" id="tDel">Delete</button>':''}${remA}${remR}${t&&ed?'<button class="btn" id="tDup">Duplicate</button>':''}${t&&can('billEdit')&&isDone(t)&&!t.invoiceId&&t.billable!==false&&t.clientId?'<button class="btn teal" id="tBill">Raise invoice</button>':''}<span class="grow"></span><button class="btn" data-x>${canEditAny?'Cancel':'Close'}</button>${canEditAny?'<button class="btn pri" id="tSave">Save</button>':''}`;
-  const m=modal(t?esc(t.title):'New task',body,foot);
+  const m=modal(t?esc(t.title)+scopePill(t):'New task',body,foot);
+  {const sc=m.querySelector('[name=scope]'),uc=m.querySelector('[name=udinRequired]');if(sc&&uc)sc.addEventListener('change',()=>{if(sc.value==='SIGNUDIN')uc.checked=true})}
   const sv=m.querySelector('#tSave');
   if(sv)sv.onclick=async()=>{
     const o=formData(m.querySelector('#tf'));if(t)o.id=t.id;
@@ -928,7 +940,7 @@ function clientModal(id){
   const m=modal(c?esc(c.name):'New client',body,foot);
   if(ed){$$('.chip',m).forEach(ch=>ch.onclick=()=>{const s=ch.dataset.s;sel.has(s)?sel.delete(s):sel.add(s);ch.classList.toggle('on')});
     m.querySelector('#cgst').oninput=e=>{const g=e.target.value.trim();if(g.length>=2&&STATES[g.slice(0,2)])m.querySelector('#cst').value=g.slice(0,2)}}
-  let fm=Object.entries((c&&c.feeMap)||{});const fmDraw=()=>{const el=m.querySelector('#fmL');if(!el)return;el.innerHTML=fm.map(([k,v],i)=>`<div style="display:flex;gap:8px;margin:3px 0"><select data-fk="${i}" ${dis} style="flex:1">${opts(TPL.map(t=>[t.code,t.name]),k)}</select><input type="number" data-fv="${i}" value="${esc(v)}" ${dis} style="width:120px;text-align:right">${ed?`<button class="btn sm" type="button" data-fr="${i}">✕</button>`:''}</div>`).join('')||'<div class="sm mut">Standard fees apply.</div>';
+  let fm=Object.entries((c&&c.feeMap)||{});const fmDraw=()=>{const el=m.querySelector('#fmL');if(!el)return;el.innerHTML=fm.map(([k,v],i)=>`<div style="display:flex;gap:8px;margin:3px 0"><select data-fk="${i}" ${dis} style="flex:1">${opts([...TPL.map(t=>[t.code,t.name]),['#SIGN','Sign only (any work)'],['#SIGNUDIN','Sign + UDIN (any work)']],k)}</select><input type="number" data-fv="${i}" value="${esc(v)}" ${dis} style="width:120px;text-align:right">${ed?`<button class="btn sm" type="button" data-fr="${i}">✕</button>`:''}</div>`).join('')||'<div class="sm mut">Standard fees apply.</div>';
     $$('[data-fk]',el).forEach(x=>x.onchange=()=>fm[+x.dataset.fk][0]=x.value);$$('[data-fv]',el).forEach(x=>x.oninput=()=>fm[+x.dataset.fv][1]=x.value);$$('[data-fr]',el).forEach(x=>x.onclick=()=>{fm.splice(+x.dataset.fr,1);fmDraw()})};fmDraw();
   const fa=m.querySelector('#fmAdd');if(fa)fa.onclick=()=>{fm.push([TPL[0].code,'']);fmDraw()};
   const cSync=()=>{const isC=m.querySelector('#cIsC').checked;$$('.cvia',m).forEach(x=>x.style.display=isC?'none':'flex');$$('.ccons',m).forEach(x=>x.style.display=isC?'flex':'none')};cSync();m.querySelector('#cIsC').addEventListener('change',cSync);
@@ -1095,7 +1107,7 @@ function regRows(rows){return [['Invoice no.','Date','Client','Client GSTIN','Pl
 function invoiceBuilder(pre){
   const S=D.settings,gstOn=()=>gstOnDate($('#ivD')?$('#ivD').value:today()),rate=Number(S.gstRate||18),firmSt=String(S.firmStateCode||'27').padStart(2,'0');
   let st={clientId:pre.clientId||'',lines:[],exp:new Set(pre.expenseIds||[]),showAll:false};
-  const addTaskLine=t=>{if(st.lines.some(l=>l.taskId===t.id))return;st.lines.push({taskId:t.id,desc:(st.clientId&&t.clientId!==st.clientId?cName(t.clientId)+' – ':'')+t.title+(t.period?' – '+t.period:''),sac:S.defaultSac||'9982',amount:Number(t.fees)||0})};
+  const addTaskLine=t=>{if(st.lines.some(l=>l.taskId===t.id))return;st.lines.push({taskId:t.id,desc:(st.clientId&&t.clientId!==st.clientId?cName(t.clientId)+' – ':'')+t.title+(t.period?' – '+t.period:'')+(t.scope==='SIGN'?' (review & signing)':t.scope==='SIGNUDIN'?' (review & signing with UDIN)':''),sac:S.defaultSac||'9982',amount:Number(t.fees)||0})};
   if(pre.taskIds)pre.taskIds.forEach(id=>{const t=D.tasks.find(x=>x.id===id);if(t)addTaskLine(t)});
   const m=modal('New invoice',`<div id="ivb"></div>`,`<span class="sm mut">Invoice number is allotted automatically on saving (${esc(S.invoicePrefix||'INV')}/${fyLbl(fyStart())}/…)</span><span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="ivGo">Issue invoice</button>`,'wide');
   const draw=()=>{
@@ -1110,7 +1122,7 @@ function invoiceBuilder(pre){
       <label>Invoice date<input type="date" id="ivD" value="${$('#ivD')?$('#ivD').value:today()}"></label>
       <label>Due date<input type="date" id="ivDue" value="${$('#ivDue')?$('#ivDue').value:addDays(today(),S.paymentTermsDays||15)}"></label>
       <label>Place of supply<select id="ivPos">${opts(Object.entries(STATES).map(([k,n])=>[k,k+' – '+n]),c&&!$('#ivPos')?c.stateCode||firmSt:pos)}</select></label>
-      <label class="s2" style="grid-column:span 2">Narration (optional)<input id="ivN" value="${esc($('#ivN')?$('#ivN').value:'')}" placeholder="e.g. Professional services for FY 2025-26"></label></div>
+      <label class="s2" style="grid-column:span 2">Note printed on the invoice (client will see it – optional)<input id="ivN" value="${esc($('#ivN')?$('#ivN').value:'')}" placeholder="e.g. Professional services for FY 2025-26"></label></div>
       ${redirect?`<div class="note" style="border-color:#e0c8ff;background:var(--purpleSoft);color:var(--purple)">This client’s work is billed to the consultant <b>${esc(cName(c.consultantId))}</b>. <button class="btn sm" id="ivSw">Switch to ${esc(cName(c.consultantId))}</button></div>`:''}
       ${c&&c.isConsultant?`<div class="note" style="border-color:#e0c8ff;background:var(--purpleSoft)"><b>Consultant invoice</b> – unbilled work of clients received through ${esc(c.name)} and billed to the consultant is listed below; each line names the end client. Clients set to “Bill to: client” are invoiced directly.${c.feeTerms?'<br>Fee arrangement: <b>'+esc(c.feeTerms)+'</b>':''}</div>`:''}
       ${c?`<div class="note">${esc(c.name)} · ${esc(c.gstin||'Unregistered')} · ${esc([c.address,c.city,c.pincode].filter(Boolean).join(', ')||'Address not set — add it in the client master')}</div>`:''}
@@ -1465,7 +1477,7 @@ VIEWS.settings={
      <div class="card" style="margin-bottom:14px"><div class="hd"><h3>Tally ledger names (for Tally export)</h3><span class="sm mut" style="margin-left:auto">Must match the ledger names in your Tally company exactly</span></div><div class="bd"><div class="f three">
       ${Object.entries({tallyIncome:'Professional fees (income)',tallyCgst:'Output CGST',tallySgst:'Output SGST',tallyIgst:'Output IGST',tallyReimb:'Reimbursements recovered',tallyRound:'Round off',tallyBank:'Bank ledger for receipts',tallyTds:'TDS receivable',tallyWriteoff:'Write-off / discount',tallyDebtorGroup:'Group for party ledgers'}).map(([k,l])=>`<label>${l}<input name="${k}" value="${esc(S[k]||'')}" placeholder="${esc(TALLY_DEF[k])}"></label>`).join('')}</div></div></div>
      <div class="card" style="margin-bottom:14px"><div class="hd"><h3>Standard fees per compliance (₹, excl. GST)</h3><span class="sm mut" style="margin-left:auto">Used when tasks are created from the Compliance calendar. A client-specific fee (client master) overrides it.</span></div>
-      <div class="bd" style="columns:2;column-gap:24px">${TPL.map(t=>`<div style="display:flex;gap:8px;align-items:center;padding:3px 0;break-inside:avoid"><span style="flex:1" class="sm">${esc(t.name)}</span><input type="number" min="0" data-sf="${t.code}" value="${esc(stdFees()[t.code]||'')}" style="width:110px;text-align:right"></div>`).join('')}</div></div>
+      <div class="bd" style="columns:2;column-gap:24px">${TPL.map(t=>`<div style="display:flex;gap:8px;align-items:center;padding:3px 0;break-inside:avoid"><span style="flex:1" class="sm">${esc(t.name)}</span><input type="number" min="0" data-sf="${t.code}" value="${esc(stdFees()[t.code]||'')}" style="width:110px;text-align:right"></div>`).join('')}${[['#SIGN','Sign only (any work, consultant requests)'],['#SIGNUDIN','Sign + UDIN (any work, consultant requests)']].map(([k,l])=>`<div style="display:flex;gap:8px;align-items:center;padding:3px 0;break-inside:avoid"><span style="flex:1" class="sm"><b>${l}</b></span><input type="number" min="0" data-sf="${k}" value="${esc(stdFees()[k]||'')}" style="width:110px;text-align:right"></div>`).join('')}</div></div>
      <div class="bar"><span class="grow"></span><button class="btn pri" id="sSave">Save settings</button></div></form>`;
     $$('#acCodes .chip').forEach(ch=>ch.onclick=()=>ch.classList.toggle('on'));
     {const gs=$('#gstRegSel'),gt=()=>$$('.gstR').forEach(x=>x.style.display=gs.value==='Yes'?'':'none');gs.onchange=gt;gt()}
@@ -1509,6 +1521,9 @@ const DOC_TPL={'GST':['Sales register / sales invoices','Purchase register / pur
  'Certification':['Supporting documents','Management representation','Draft certificate for approval'],
  'Accounting':['Bank statements','Sales & purchase bills','Expense vouchers','Cash book']};
 const UDIN_CATS=['Statutory Audit','Tax Audit','Certification','Transfer Pricing'];
+const SCOPES=[['','Full work (prepare & file)'],['SIGN','Sign only'],['SIGNUDIN','Sign + UDIN']];
+const scopeLbl=s=>s==='SIGN'?'Sign only':s==='SIGNUDIN'?'Sign + UDIN':'';
+const scopePill=t=>t&&t.scope?' '+pill(scopeLbl(t.scope),t.scope==='SIGNUDIN'?'p-amber':'p-purple'):'';
 const UDIN_DOCS=['Statutory audit report','Tax audit report (Form 3CA/3CB-3CD)','Transfer pricing report','GST audit / reconciliation certificate','Certificate – net worth','Certificate – turnover','Certificate – Form 15CB','Certificate – other','Bank / stock audit report','Other attest function'];
 const LAWS=['Income-tax','GST','TDS / TCS','Companies Act / MCA','FEMA / RBI','Customs','Professional tax','Other'];
 const STAGES=['Notice received','Documents being collected','Reply filed','Hearing scheduled','Order passed','Rectification filed','Appeal – first appellate authority','Appeal – Tribunal','Appeal – High Court','Closed'];
@@ -1963,7 +1978,7 @@ VIEWS.consultants={
     const list=consultants().filter(c=>!q||c.name.toLowerCase().includes(q)).map(c=>({c,st:consultantStats(c)}));
     if(!list.length){$('#kOut').innerHTML='<div class="empty">No consultants yet. Open a client (or add one) and tick “This is a consultant who sends us work”.</div>';return}
     const tot=k=>list.reduce((a,x)=>a+(typeof x.st[k]==='number'?x.st[k]:x.st[k].length),0);
-    const nreq=D.tasks.filter(t=>t.genKey==='CONSULTANT-REQ'&&t.status==='Not Started');
+    const nreq=D.tasks.filter(t=>(t.genKey==='CONSULTANT-REQ'||t.createdBy==='client')&&t.consultantId&&t.status==='Not Started');
     $('#kOut').innerHTML=`${nreq.length?`<div class="note" style="margin:0 0 12px;border-color:#e0c8ff;background:var(--purpleSoft)">📥 <b>${nreq.length}</b> new work request(s) from consultants waiting to be started: ${nreq.slice(0,6).map(t=>`<span class="lnk" data-req="${t.id}">${esc(cName(t.clientId))} – ${esc(t.title)}</span>`).join(', ')}${nreq.length>6?' …':''}</div>`:''}<div class="kpis">${[['Consultants',list.length,''],['Open work via consultants',tot('open'),''],['Overdue',tot('over'),'red'],...(bv?[['Completed – not billed',inr(tot('wip'),0),'teal'],['Outstanding from consultants',inr(tot('os'),0),'red']]:[])].map(k=>`<div class="kpi ${k[2]}" style="cursor:default"><div class="l">${k[0]}</div><div class="n">${k[1]}</div></div>`).join('')}</div>
      <div class="tw"><table class="t" style="min-width:1100px"><thead><tr><th>Consultant</th><th class="num">End clients</th><th class="num">Open</th><th class="num">Overdue</th>${bv?'<th class="num">Unbilled work</th><th class="num">Billed (FY)</th><th class="num">Received (FY)</th><th class="num">Outstanding</th><th>Oldest unpaid</th>':''}<th></th></tr></thead><tbody>
      ${list.map(({c,st})=>`<tr data-id="${c.id}"><td><span class="lnk" data-k="open">${esc(c.name)}</span>${c.feeTerms?`<div class="sm mut">${esc(c.feeTerms)}</div>`:''}</td><td class="num">${st.ends.length}</td><td class="num">${st.open.length}</td><td class="num ${st.over.length?'over':''}">${st.over.length}</td>
@@ -1984,7 +1999,7 @@ function consultantModal(id){
   const m=modal('Consultant – '+esc(cs.name),`<div class="note" style="margin-top:0">${esc(cs.contact||'')} ${esc(cs.phone||'')} ${esc(cs.email||'')}${cs.feeTerms?'<br>Fee arrangement: <b>'+esc(cs.feeTerms)+'</b>':''}<br>End clients: <b>${st.ends.length}</b> · Open tasks <b>${st.open.length}</b> (${st.over.length} overdue)${bv?` · Unbilled <b>${inr(st.wip,0)}</b> · Outstanding <b class="${st.os>0.5?'over':''}">${inr(st.os,0)}</b>`:''}</div>
     ${bv&&st.openInv.length?`<div class="sub"><h4>Pending bills</h4><table class="t"><tbody>${st.openInv.map(i=>`<tr class="click" data-iv="${i.id}"><td>${esc(i.number)}</td><td>${fD(i.date)}</td><td class="num">${amt(i.total)}</td><td class="num"><b>${amt(i.balance)}</b></td><td>${payPill(i)}</td></tr>`).join('')}</tbody></table></div>`:''}
     <div class="sub"><h4>Work received through ${esc(cs.name)}</h4>${Object.keys(byClient).length?Object.entries(byClient).sort((a,b)=>cName(a[0]).localeCompare(cName(b[0]))).map(([cid,ts])=>`<div style="margin:10px 0 4px;font-weight:600">${esc(cName(cid))} <span class="mut sm">${C[cid]&&C[cid].billTo==='consultant'?'· billed to consultant':C[cid]&&cid!==id?'· billed to client':''}</span></div>
-      <table class="t"><tbody>${ts.sort(sortTasks).map(t=>`<tr class="click" data-t="${t.id}"><td style="width:120px">${dueCell(t)}</td><td>${esc(t.title)} <span class="mut sm">${esc(t.period)}</span></td><td>${esc(uName(t.assigneeId))}</td><td>${stPill(t.status)}</td>${bv?`<td class="num">${Number(t.fees)>0?inr(t.fees,0):''}</td><td>${billSt(t)}</td>`:''}</tr>`).join('')}</tbody></table>`).join(''):'<div class="mut sm">No work recorded yet.</div>'}</div>`,
+      <table class="t"><tbody>${ts.sort(sortTasks).map(t=>`<tr class="click" data-t="${t.id}"><td style="width:120px">${dueCell(t)}</td><td>${esc(t.title)}${scopePill(t)} <span class="mut sm">${esc(t.period)}</span></td><td>${esc(uName(t.assigneeId))}</td><td>${stPill(t.status)}</td>${bv?`<td class="num">${Number(t.fees)>0?inr(t.fees,0):''}</td><td>${billSt(t)}</td>`:''}</tr>`).join('')}</tbody></table>`).join(''):'<div class="mut sm">No work recorded yet.</div>'}</div>`,
     `<button class="btn" id="kEdit">Consultant details</button>${bv?'<button class="btn" id="kSoa">Statement</button>':''}<span class="grow"></span>${bv&&st.os>0.5?waBtn(cs.phone,consultantReminder(cs,st),'Payment reminder'):''}${can('billEdit')&&st.wipT.length?'<button class="btn teal" id="kBill">Raise invoice for unbilled work</button>':''}<button class="btn" id="kCopy">Copy for Excel</button>`,'wide');
   $$('[data-t]',m).forEach(r=>r.onclick=()=>taskModal(r.dataset.t));$$('[data-iv]',m).forEach(r=>r.onclick=()=>invoiceView(r.dataset.iv));
   m.querySelector('#kEdit').onclick=()=>clientModal(id);const so=m.querySelector('#kSoa');if(so)so.onclick=()=>statementModal(id);
@@ -2282,7 +2297,7 @@ async function renderPortal(){
   const row=(label,sub,attrs)=>`<div class="prow"><div style="flex:1"><b>${esc(label)}</b>${sub?`<div class="sm mut">${esc(sub)}</div>`:''}</div><label class="btn sm pri" style="cursor:pointer">Upload<input type="file" ${attrs} style="display:none"></label></div>`;
   const stc=s=>({'Not Started':'p-gray','In Progress':'p-blue','Pending from Client':'p-amber','Under Review':'p-purple','Completed':'p-green'}[s]||'p-gray');
   const stl=s=>s==='Pending from Client'?'Waiting for documents':s==='Not Started'?'Received – not started':s;
-  const tabs=sess?[['dash','🏠 Overview'],['clients','👥 My clients'],['new','➕ Add new work'],['work','📋 Work status'],['docs','📎 Pending documents'],['bills','₹ Bills & statement']]
+  const tabs=sess?[['dash','🏠 Overview'],['clients','👥 My clients'],['new','➕ Add new work'],['work','📋 Work status'],['grid','📊 Compliance grid'],['docs','📎 Pending documents'],['bills','₹ Bills & statement']]
     :cons?[['new','➕ Add new work'],['work','📋 Work status'],['docs','📎 Pending documents'],['bills','₹ Pending bills']]:[];
   const cur=el.dataset.tab||(sess?'dash':'new');
   const W=info.work||[],openW=W.filter(w=>w.status!=='Completed');
@@ -2303,11 +2318,13 @@ async function renderPortal(){
     const L=(info.clients||[]).map(c=>{const ws=W.filter(w=>w.clientId===c.id);return{c,open:ws.filter(w=>w.status!=='Completed').length,done:ws.filter(w=>w.status==='Completed').length,pend:ws.reduce((a,w)=>a+(w.status!=='Completed'?w.pending:0),0)}});
     body=L.length?`<div class="tw" style="box-shadow:none;margin-top:14px"><table class="t"><thead><tr><th>Client</th><th>PAN / GSTIN</th><th>Bill goes to</th><th class="num">Open</th><th class="num">Completed (12 m)</th><th class="num">Docs awaited</th><th></th></tr></thead><tbody>${L.map(x=>`<tr><td><b>${esc(x.c.name)}</b></td><td class="sm">${esc(x.c.pan||'—')}<br>${esc(x.c.gstin||'')}</td><td class="sm">${x.c.billTo==='consultant'?'You':'Client directly'}</td><td class="num">${x.open}</td><td class="num">${x.done}</td><td class="num ${x.pend?'soon':''}">${x.pend||'—'}</td><td style="white-space:nowrap"><button class="btn sm" data-cw="${esc(x.c.id)}">Work</button> <button class="btn sm" data-cn="${esc(x.c.id)}">+ New work</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No clients yet. Use “Add new work” – a new client is created automatically.</div>';
   }
-  else if(cur==='new'){const pre=el.dataset.nc||'';el.dataset.nc='';body=`<div class="f" id="pnf" style="margin-top:14px">
+  else if(cur==='new'){const pre=el.dataset.nc||'',preR=el.dataset.nr||'',preK=el.dataset.nk||'';el.dataset.nc='';el.dataset.nr='';el.dataset.nk='';body=`<div class="f" id="pnf" style="margin-top:14px">
      <label class="s2">Client *<select id="pnC">${opts([['','— Select your client —'],...(info.clients||[]).map(c=>[c.id,c.name]),['__new','+ New client (not in the list)']],pre)}</select></label>
+     <label>Return / compliance<select id="pnR">${opts([['','Other work (describe below)'],...TPL.map(t=>[t.code,t.name])],preR)}</select></label><label id="pnKL">Period<span id="pnKB" data-pre="${esc(preK)}"></span></label>
+     <div class="s2"><div class="sm" style="font-weight:600;margin-bottom:6px">What do you need from us? *</div><div style="display:flex;gap:10px;flex-wrap:wrap">${SCOPES.map(([k,l],i)=>`<label class="chk" style="border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer"><input type="radio" name="pnS" value="${k}" ${i===0?'checked':''}> ${l}</label>`).join('')}</div><div class="sm mut" id="pnSN" style="margin-top:6px"></div></div>
      <label class="pnN s2" style="display:none">New client name *<input id="pnNm" placeholder="As per PAN"></label><label class="pnN" style="display:none">PAN<input id="pnPan" maxlength="10" style="text-transform:uppercase"></label><label class="pnN" style="display:none">GSTIN<input id="pnG" maxlength="15" style="text-transform:uppercase"></label>
-     <label class="s2">Work required *<input id="pnT" placeholder="e.g. GSTR-3B Oct 2026 / ITR AY 2026-27 / Reply to notice u/s 143(2)"></label>
-     <label>Type of work<select id="pnCat">${opts(CATEGORIES,'Other')}</select></label><label>Period / AY / FY<input id="pnP" placeholder="e.g. Oct 2026"></label>
+     <label class="s2 pnO">Work required *<input id="pnT" placeholder="e.g. Reply to notice u/s 143(2) / Project report / Net-worth certificate"></label>
+     <label class="pnO">Type of work<select id="pnCat">${opts(CATEGORIES,'Other')}</select></label><label class="pnO">Period / AY / FY<input id="pnP" placeholder="e.g. FY 2025-26"></label>
      <label>Required by<input type="date" id="pnD"></label><label>Attach a document (optional)<input type="file" id="pnF"></label>
      <label class="s2">Notes for us<textarea id="pnNo" rows="3" placeholder="Any instructions, contact person, login availability…"></textarea></label></div>
      <div class="bar" style="margin-top:12px"><span class="grow"></span><button class="btn pri" id="pnGo">Send work to ${esc(firm)}</button></div>`}
@@ -2315,7 +2332,15 @@ async function renderPortal(){
     const cf=el.dataset.cf||'',ws=el.dataset.ws||(sess?'open':'all'),fees=sess&&info.feesPerTask;
     const list=W.filter(w=>(!cf||w.clientId===cf)&&(ws==='all'||(ws==='open')===(w.status!=='Completed')));
     body=(sess?`<div class="bar" style="margin:14px 0 8px"><select id="pwC">${opts([['','All clients'],...(info.clients||[]).map(c=>[c.id,c.name])],cf)}</select><select id="pwS">${opts([['open','Open work'],['done','Completed (last 12 months)'],['all','All']],ws)}</select><span class="grow"></span><span class="sm mut">${list.length} item(s)</span></div>`:'')+
-     (list.length?`<div class="tw" style="box-shadow:none"><table class="t"><thead><tr><th>Client</th><th>Work</th><th>Due</th><th>Status</th>${fees?'<th class="num">Fee (₹)</th>':''}<th>Bill</th>${sess?'<th></th>':''}</tr></thead><tbody>${list.map(w=>`<tr><td>${esc(w.client)}</td><td>${esc(w.title)} <span class="mut sm">${esc(w.period)}</span>${w.pending?`<div class="sm soon">${w.pending} document(s) awaited</div>`:''}${w.arn?`<div class="sm mut">ARN / Ack. ${esc(w.arn)}</div>`:''}${sess&&w.incharge?`<div class="sm mut">Handled by ${esc(w.incharge)}</div>`:''}${(w.files||[]).length?`<div class="sm">${w.files.map(f=>`<span class="lnk" data-fd="${esc(w.id)}|${esc(f.id)}">📄 ${esc(f.name)}</span>`).join(' · ')}</div>`:''}</td><td class="${w.status!=='Completed'&&w.due&&days(w.due)<0?'over':''}">${w.due?fD(w.due):'—'}</td><td>${pill(stl(w.status),stc(w.status))}${w.completedOn?`<div class="sm mut">${fD(w.completedOn)}</div>`:''}</td>${fees?`<td class="num">${w.fee!=null?amt(w.fee):'—'}</td>`:''}<td class="sm">${esc(w.invoiceNo||'')}</td>${sess?`<td><button class="btn sm" data-msg="${esc(w.id)}" title="Messages">💬${(w.msgs||[]).length?' '+w.msgs.length:''}</button></td>`:''}</tr>`).join('')}</tbody></table></div>`:'<div class="empty">No work in this view.</div>');
+     (list.length?`<div class="tw" style="box-shadow:none"><table class="t"><thead><tr><th>Client</th><th>Work</th><th>Due</th><th>Status</th>${fees?'<th class="num">Fee (₹)</th>':''}<th>Bill</th>${sess?'<th></th>':''}</tr></thead><tbody>${list.map(w=>`<tr><td>${esc(w.client)}</td><td>${esc(w.title)}${w.scope?' '+pill(scopeLbl(w.scope),w.scope==='SIGNUDIN'?'p-amber':'p-purple'):''} <span class="mut sm">${esc(w.period)}</span>${w.pending?`<div class="sm soon">${w.pending} document(s) awaited</div>`:''}${w.arn?`<div class="sm mut">ARN / Ack. ${esc(w.arn)}</div>`:''}${sess&&w.incharge?`<div class="sm mut">Handled by ${esc(w.incharge)}</div>`:''}${(w.files||[]).length?`<div class="sm">${w.files.map(f=>`<span class="lnk" data-fd="${esc(w.id)}|${esc(f.id)}">📄 ${esc(f.name)}</span>`).join(' · ')}</div>`:''}</td><td class="${w.status!=='Completed'&&w.due&&days(w.due)<0?'over':''}">${w.due?fD(w.due):'—'}</td><td>${pill(stl(w.status),stc(w.status))}${w.completedOn?`<div class="sm mut">${fD(w.completedOn)}</div>`:''}</td>${fees?`<td class="num">${w.fee!=null?amt(w.fee):'—'}</td>`:''}<td class="sm">${esc(w.invoiceNo||'')}</td>${sess?`<td><button class="btn sm" data-msg="${esc(w.id)}" title="Messages">💬${(w.msgs||[]).length?' '+w.msgs.length:''}</button></td>`:''}</tr>`).join('')}</tbody></table></div>`:'<div class="empty">No work in this view.</div>');
+  }
+  else if(cur==='grid'){
+    const type=GRID_TYPES.find(x=>x.k===(el.dataset.gt||'GSTR3B'))||GRID_TYPES[1],ann=type.f==='A',fy=+(el.dataset.gfy||(ann?fyStart()-1:fyStart()));
+    const {cols,rows}=gridBuild(type,fy,info.clients||[],info.gridTasks||[]);el._pg=rows;
+    body=`<div class="tabs" style="margin-top:12px;flex-wrap:wrap">${GRID_TYPES.map(x=>`<button data-pgt="${x.k}" class="${x.k===type.k?'on':''}">${esc(x.l)}</button>`).join('')}</div>
+     <div class="bar" style="margin:10px 0"><select id="pgFy">${opts([0,1,2,3].map(i=>fyStart()-i).map(y=>[y,ann?`Returns for FY ${fyLong(y)} (AY ${fyLong(y+1)})`:'FY '+fyLong(y)]),fy)}</select><span class="grow"></span><span class="sm mut">Click ✗ or ○ to send that work to us · click ✓ to see the ARN</span></div>
+     ${rows.length?`<div class="card" style="padding:0;overflow:auto" id="pgWrap">${gridTableHtml(cols,rows)}</div>`:'<div class="empty">No returns tracked for your clients in this view yet. Send work using “Add new work” and choose the return and period.</div>'}
+     <div class="sm mut" style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap">${GRID_LEGEND()}</div>`;
   }
   else if(cur==='docs')body=docsHtml;
   else if(sess){
@@ -2346,6 +2371,18 @@ async function renderPortal(){
   $$('#portal input[data-t]').forEach(i=>i.onchange=()=>up(i.files[0],i.dataset.t,i.dataset.i));
   const pf=$('#poF');if(pf)pf.onchange=e=>up(e.target.files[0],$('#poT').value,'');
   const p16=$('#p16F');if(p16)p16.onchange=e=>up(e.target.files[0],'','',{kind:'16A',label:$('#p16Q').value});
+  $$('#portal [data-pgt]').forEach(b=>b.onclick=()=>{const t=GRID_TYPES.find(x=>x.k===b.dataset.pgt);if((t.f==='A')!==((GRID_TYPES.find(x=>x.k===(el.dataset.gt||'GSTR3B'))||{}).f==='A'))el.dataset.gfy='';el.dataset.gt=b.dataset.pgt;renderPortal()});
+  const pfy=$('#pgFy');if(pfy)pfy.onchange=()=>{el.dataset.gfy=pfy.value;renderPortal()};
+  $$('#pgWrap [data-g]').forEach(b=>b.onclick=()=>{const [ri,ci]=b.dataset.g.split('|').map(Number),x=el._pg[ri].cells[ci];if(!x)return;
+    if(x.task){if((info.work||[]).some(w=>w.id===x.task.id))consMsgModal(x.task.id);else toast(`${x.t.name} · ${x.task.period||''}: ${G_TIP[x.s]}${x.task.completedOn&&x.s==='ok'?' on '+fD(x.task.completedOn):''}${x.task.arn?' · ARN '+x.task.arn:''}`);return}
+    el.dataset.nc=x.c.id;el.dataset.nr=x.code;el.dataset.nk=x.per.key;el.dataset.tab='new';renderPortal()});
+  $$('#pgWrap [data-gc]').forEach(a=>a.onclick=()=>{el.dataset.cf=a.dataset.gc;el.dataset.ws='all';el.dataset.tab='work';renderPortal()});
+  const pr=$('#pnR');if(pr){const kb=$('#pnKB'),pre=kb.dataset.pre;const per=()=>{const t=TPL.find(x=>x.code===pr.value);$$('#portal .pnO').forEach(x=>x.style.display=t?'none':'');$('#pnKL').style.display=t?'':'none';if(!t){kb.innerHTML='';return}
+      const fy=fyStart(),d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);const lm=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+      if(t.freq==='M')kb.innerHTML=`<input type="month" id="pnK" value="${esc(pre&&/^\d{4}-\d{2}$/.test(pre)?pre:lm)}">`;
+      else if(t.freq==='Q')kb.innerHTML=`<select id="pnK">${opts([fy,fy-1].flatMap(y=>[4,3,2,1].map(q=>[fyLong(y)+'-Q'+q,'Q'+q+' FY '+fyLong(y)])),pre||'')}</select>`;
+      else kb.innerHTML=`<select id="pnK">${opts([fy-1,fy,fy-2].map(y=>[fyLong(y),'FY '+fyLong(y)+' (AY '+fyLong(y+1)+')']),pre||fyLong(fy-1))}</select>`};pr.onchange=per;per()}
+  $$('#portal [name=pnS]').forEach(r=>r.onchange=()=>{const v=($('[name=pnS]:checked')||{}).value;$('#pnSN').innerHTML=v==='SIGN'?'You prepare the working / return; we review and sign. Please upload the draft computation, 26AS/AIS and documents to be signed.':v==='SIGNUDIN'?'We review, sign and generate UDIN. Please upload the financial statements / document to be signed and the management representation letter.':''});
   const pc=$('#pnC');if(pc){const tg=()=>$$('#portal .pnN').forEach(x=>x.style.display=pc.value==='__new'?'flex':'none');pc.onchange=tg;tg()}
   $$('#portal [data-msg]').forEach(b=>b.onclick=()=>consMsgModal(b.dataset.msg));
   $$('#portal [data-fd]').forEach(a=>a.onclick=()=>{const [t,f]=a.dataset.fd.split('|');if(sess)consFile(t,f);else toast('Sign in to download documents',true)});
@@ -2361,14 +2398,175 @@ async function renderPortal(){
   showInstall();
   const go=$('#pnGo');if(go)go.onclick=async()=>{
     const cid=$('#pnC').value,f=$('#pnF').files[0];
-    if(!cid){toast('Select your client',true);return}if(!$('#pnT').value.trim()){toast('Describe the work required',true);return}
+    const rc=$('#pnR')?$('#pnR').value:'';if(!cid){toast('Select your client',true);return}if(!rc&&!$('#pnT').value.trim()){toast('Describe the work required',true);return}if(rc&&!($('#pnK')&&$('#pnK').value)){toast('Choose the period',true);return}
     if(f&&f.size>10*1024*1024){toast('File is larger than 10 MB',true);return}
     go.disabled=true;go.textContent='Sending…';busy(true);
-    try{const p={clientId:cid==='__new'?'':cid,newClient:cid==='__new'?$('#pnNm').value:'',pan:$('#pnPan').value,gstin:$('#pnG').value,title:$('#pnT').value,category:$('#pnCat').value,period:$('#pnP').value,dueDate:$('#pnD').value,notes:$('#pnNo').value};
+    try{const p={clientId:cid==='__new'?'':cid,newClient:cid==='__new'?$('#pnNm').value:'',pan:$('#pnPan').value,gstin:$('#pnG').value,title:$('#pnT').value,category:$('#pnCat').value,period:$('#pnP').value,dueDate:$('#pnD').value,notes:$('#pnNo').value,code:rc,periodKey:rc?$('#pnK').value:'',scope:($('[name=pnS]:checked')||{}).value||''};
       if(f){p.data=await b64file(f);p.name=f.name;p.mime=f.type}
-      const r=await pcall('Submit',p);el.dataset.tab='work';el.dataset.cf='';el.dataset.ws=sess?'open':'all';await renderPortal();msg(`<span style="color:var(--green)">✓ Received: ${esc(r.client)} – ${esc(r.title)}. We will confirm shortly.</span>`)}
+      const r=await pcall('Submit',p);el.dataset.tab='work';el.dataset.cf='';el.dataset.ws=sess?'open':'all';await renderPortal();msg(r.existing?`<span style="color:var(--blue)">ℹ ${esc(r.client)} – ${esc(r.title)} is already with us (status: ${esc(r.status)}). Your note / document has been added to it.</span>`:`<span style="color:var(--green)">✓ Received: ${esc(r.client)} – ${esc(r.title)}. We will confirm shortly.</span>`)}
     catch(e){msg('<span class="over">'+esc(errMsg(e))+'</span>');go.disabled=false;go.textContent='Send work';if(sess&&/AUTH_REQUIRED|PASSWORD_CHANGE/.test(errMsg(e)))handleErr(e)}finally{busy(false)}};
 }
+/* ---------------- compliance grid (v8.6) ---------------- */
+const GRID_TYPES=[
+  {k:'GSTR1',l:'GSTR-1',f:'M',m:[['GSTR1','all'],['GSTR1Q','q3'],['IFF','q12']]},
+  {k:'GSTR3B',l:'GSTR-3B',f:'M',m:[['GSTR3B','all'],['GSTR3BQ','q3'],['PMT06','q12']]},
+  {k:'CMP08',l:'CMP-08',f:'Q',m:[['CMP08']]},
+  {k:'TDSPAY',l:'TDS deposit',f:'M',m:[['TDSPAY','all']]},
+  {k:'TDSRET',l:'TDS returns',f:'Q',m:[['TDSRET']]},
+  {k:'TCSRET',l:'TCS returns',f:'Q',m:[['TCSRET']]},
+  {k:'ADVTAX',l:'Advance tax',f:'Q',m:[['ADVTAX']]},
+  {k:'PFESI',l:'PF / ESI',f:'M',m:[['PFESI','all']]},
+  {k:'ANNUAL',l:'Annual (ITR, audit, ROC)',f:'A'}];
+const GRID_ANNUAL=[['ITR',['ITR12','ITRNA','ITRA','ITRTP']],['Tax audit',['TAR']],['TP report',['TPR']],['GSTR-9',['GSTR9']],['GSTR-9C',['GSTR9C']],['GSTR-4',['GSTR4']],['Stat. audit',['STAUD']],['AOC-4',['AOC4']],['MGT-7',['MGT7']],['ADT-1',['ADT1']],['DPT-3',['DPT3']],['LLP-11',['LLP11']],['LLP-8',['LLP8']]];
+const GRID_OPTIONAL={IFF:1,PMT06:1};
+const GF={t:'GSTR3B',fy:null,fyA:null,who:'',src:'',only:'',q:''};
+const tplOf=code=>TPL.find(t=>t.code===code);
+const gridApplies=(c,code)=>{const t=tplOf(code);return !!t&&(c.services||[]).some(s=>t.svc.includes(s))};
+function gridDue(t,per){
+  const ymd=(y,m,d)=>{const last=new Date(y,m,0).getDate();return `${y}-${pad(m)}-${pad(Math.min(d,last))}`};
+  if(t.freq==='M'){const [y,m]=per.key.split('-').map(Number);if(t.march&&m===3)return ymd(y,t.march[0],t.march[1]);const ny=m===12?y+1:y,nm=m===12?1:m+1;return ymd(ny,nm,t.day)}
+  if(t.freq==='Q'){const r=t.q[per.q-1];return ymd(per.fy+r[2],r[0],r[1])}
+  return ymd(per.fy+t.a[2],t.a[0],t.a[1]);
+}
+function gridCell(c,code,per,TI){
+  const t=tplOf(code);if(!t)return null;
+  const task=TI[c.id+'|'+code+'|'+per.key];
+  const app=gridApplies(c,code);
+  if(!task&&!app)return null;
+  const due=task&&task.dueDate||gridDue(t,per),td=today();
+  let s;
+  if(task){if(task.status==='Completed')s='ok';else if(due<td)s='od';else if(task.status==='Not Started')s='nd';else s='ip'}
+  else s=due<td?(GRID_OPTIONAL[code]?'na':'mi'):'nd';
+  return {code,t,per,task,due,s,c};
+}
+function gridPeriods(type,fy){
+  if(type.f==='M')return Array.from({length:12},(_,i)=>{const m=(i+3)%12+1,y=m>=4?fy:fy+1;return{key:`${y}-${pad(m)}`,label:new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short'}),m,y,qpos:i%3,q:Math.floor(i/3)+1,fy}});
+  if(type.f==='Q')return [1,2,3,4].map(q=>({key:fyLong(fy)+'-Q'+q,label:'Q'+q,q,fy}));
+  return [{key:fyLong(fy),label:'FY '+fyLong(fy),fy}];
+}
+function gridResolve(type,c,p,TI){
+  if(type.f==='A')return null;
+  for(const [code,rule] of type.m){
+    if(type.f==='M'){
+      if(rule==='q12'&&p.qpos===2)continue;
+      if(rule==='q3'){if(p.qpos!==2)continue;const x=gridCell(c,code,{key:fyLong(p.fy)+'-Q'+p.q,q:p.q,fy:p.fy,label:'Q'+p.q},TI);if(x)return x;continue}
+    }
+    const x=gridCell(c,code,p,TI);if(x)return x;
+  }
+  return null;
+}
+const G_CLK='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const G_ICON={ok:'✓',ip:G_CLK,od:'✗',mi:'✗',nd:'○'};
+const G_TIP={ok:'Filed',ip:'In progress',od:'Overdue',mi:'Overdue – no task recorded',nd:'Not yet due'};
+function gridBuild(type,fy,cls,tasks){
+  const TI={};(tasks||[]).forEach(t=>{const g=String(t.genKey||'');if(g.includes('|')){const [code,key]=g.split('|');TI[t.clientId+'|'+code+'|'+key]=t}});
+  let cols,rows;
+  if(type.f==='A'){
+    const per={key:fyLong(fy),label:'FY '+fyLong(fy),fy};
+    rows=cls.map(c=>({c,cells:GRID_ANNUAL.map(([l,codes])=>{for(const code of codes){const x=gridCell(c,code,per,TI);if(x)return x}return null})}));
+    const used=GRID_ANNUAL.map((_,i)=>rows.some(r=>r.cells[i]));
+    cols=GRID_ANNUAL.map(([l],i)=>({label:l,i})).filter(x=>used[x.i]);
+    rows.forEach(r=>r.cells=cols.map(x=>r.cells[x.i]));
+  }else{
+    const ps=gridPeriods(type,fy);cols=ps.map(p=>({label:p.label,p}));
+    rows=cls.map(c=>({c,cells:ps.map(p=>gridResolve(type,c,p,TI))}));
+  }
+  return {cols,rows:rows.filter(r=>r.cells.some(Boolean))};
+}
+function gridTableHtml(cols,rows,sub){
+  const pct=cols.map((_,i)=>{const due=rows.map(r=>r.cells[i]).filter(x=>x&&x.s!=='nd'&&x.s!=='na');return due.length?Math.round(100*due.filter(x=>x.s==='ok').length/due.length):null});
+  return `<table class="cgrid"><thead><tr><th class="cn">Client</th>${cols.map(c=>`<th>${esc(c.label)}</th>`).join('')}<th>Filed</th></tr></thead><tbody>${rows.map((r,ri)=>{const due=r.cells.filter(x=>x&&x.s!=='nd'&&x.s!=='na'),ok=due.filter(x=>x.s==='ok').length;
+    return `<tr><td class="cn" title="${esc(r.c.name)}"><span class="lnk" data-gc="${esc(r.c.id)}">${esc(r.c.name)}</span>${sub?sub(r.c):''}</td>${r.cells.map((x,ci)=>{if(!x)return '<td><span class="gc">–</span></td>';
+      const tip=`${x.t.name} · ${x.per.label||''}${x.task&&x.task.scope?' · '+scopeLbl(x.task.scope):''}\n${G_TIP[x.s]}${x.task&&x.task.completedOn&&x.s==='ok'?' on '+fD(x.task.completedOn):''}${x.task&&x.task.arn?'\nARN: '+x.task.arn:''}\nDue ${fD(x.due)}${x.task&&x.task.assigneeId&&typeof uName==='function'&&D.users&&D.users.length?'\nWith '+uName(x.task.assigneeId):''}`;
+      return `<td><button class="gc ${x.s==='mi'?'od':x.s==='na'?'':x.s}" data-g="${ri}|${ci}" title="${esc(tip)}">${x.s==='na'?'–':G_ICON[x.s]}</button></td>`}).join('')}<td class="sm ${due.length&&ok<due.length?'over':''}">${due.length?ok+'/'+due.length:'—'}</td></tr>`}).join('')}</tbody>
+    <tfoot><tr><td class="cn sm mut">% filed (due so far)</td>${pct.map(v=>`<td class="sm">${v==null?'':v+'%'}</td>`).join('')}<td></td></tr></tfoot></table>`;
+}
+const GRID_LEGEND=()=>`<span><span class="gc ok">✓</span> Filed</span><span><span class="gc ip">${G_CLK}</span> In progress</span><span><span class="gc od">✗</span> Overdue</span><span><span class="gc nd">○</span> Not yet due</span><span><span class="gc">–</span> Not applicable</span>`;
+VIEWS.grid={
+  mount(el){
+    if(GF.fy==null)GF.fy=fyStart();if(GF.fyA==null)GF.fyA=fyStart()-1;
+    const fys=[0,1,2,3,4].map(i=>fyStart()-i);
+    const type=GRID_TYPES.find(x=>x.k===GF.t)||GRID_TYPES[1],ann=type.f==='A';
+    const all=can('tasksAll'),cons=consultants();
+    el.innerHTML=`<div class="bar" style="flex-wrap:wrap">
+      <div class="tabs" id="gT" style="margin:0;flex-wrap:wrap">${GRID_TYPES.map(x=>`<button data-gt="${x.k}" class="${x.k===type.k?'on':''}">${esc(x.l)}</button>`).join('')}</div></div>
+     <div class="bar"><select id="gFy">${opts(fys.map(y=>[y,ann?`Returns for FY ${fyLong(y)} (AY ${fyLong(y+1)})`:'FY '+fyLong(y)]),ann?GF.fyA:GF.fy)}</select>
+      ${all?`<select id="gWho">${opts([['','All in-charges'],...activeUsers().map(u=>[u.id,u.name])],GF.who)}</select>`:''}
+      <select id="gSrc">${opts([['','Direct + consultant clients'],['direct','Direct clients only'],['cons','All consultant work'],...cons.map(c=>[c.id,'Via '+c.name])],GF.src||'')}</select>
+      <select id="gOnly">${opts([['','All'],['pending','Only with ✗ overdue']],GF.only)}</select>
+      <input type="search" id="gQ" placeholder="Search client…" value="${esc(GF.q)}" style="max-width:200px">
+      <span class="grow"></span>${can('generator')?'<button class="btn" id="gMark">Mark earlier periods filed</button>':''}<button class="btn" id="gX">Export to Excel</button></div>
+     <div class="card" style="padding:0"><div id="gWrap" style="overflow:auto"></div></div>
+     <div class="sm mut" style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">${GRID_LEGEND()}<span><span class="cvia">via</span> Work received through a consultant</span><span>Click a box to open the task${can('generator')?' or mark it filed':''}. Tick the services in each client’s record to decide which returns apply.</span></div>`;
+    $$('#gT [data-gt]').forEach(b=>b.onclick=()=>{GF.t=b.dataset.gt;this.mount(el)});
+    $('#gFy').onchange=e=>{if(ann)GF.fyA=+e.target.value;else GF.fy=+e.target.value;this.draw()};
+    const w=$('#gWho');if(w)w.onchange=e=>{GF.who=e.target.value;this.draw()};
+    $('#gSrc').onchange=e=>{GF.src=e.target.value;this.draw()};
+    $('#gOnly').onchange=e=>{GF.only=e.target.value;this.draw()};
+    $('#gQ').oninput=e=>{GF.q=e.target.value;this.draw()};
+    $('#gX').onclick=()=>this.excel();
+    const mk=$('#gMark');if(mk)mk.onclick=()=>this.markModal();
+    if(CUR===this)this.draw();
+  },
+  update(){this.draw()},
+  model(){
+    const type=GRID_TYPES.find(x=>x.k===GF.t)||GRID_TYPES[1],fy=type.f==='A'?GF.fyA:GF.fy;
+    const me=D.me.id,all=can('tasksAll'),q=GF.q.trim().toLowerCase();
+    let cls=activeClients();
+    if(!all)cls=cls.filter(c=>c.inchargeId===me||c.partnerId===me||D.tasks.some(t=>t.clientId===c.id&&(t.assigneeId===me||t.reviewerId===me)));
+    if(GF.who)cls=cls.filter(c=>c.inchargeId===GF.who);
+    if(GF.src==='direct')cls=cls.filter(c=>!c.consultantId);else if(GF.src==='cons')cls=cls.filter(c=>c.consultantId);else if(GF.src)cls=cls.filter(c=>c.consultantId===GF.src);
+    if(q)cls=cls.filter(c=>(c.name+' '+(c.code||'')+' '+(c.pan||'')).toLowerCase().includes(q));
+    let {cols,rows}=gridBuild(type,fy,cls,D.tasks);
+    if(GF.only==='pending')rows=rows.filter(r=>r.cells.some(x=>x&&(x.s==='od'||x.s==='mi')));
+    return {type,cols,rows};
+  },
+  draw(){
+    const {type,cols,rows}=this.model();this.last={type,cols,rows};
+    const wrap=$('#gWrap');if(!wrap)return;
+    if(!rows.length){wrap.innerHTML=`<div class="empty">No clients in this view.<br><span class="sm">Tick the services (e.g. <b>GST Monthly</b>, <b>GST QRMP</b>, <b>TDS</b>, <b>ITR</b>) in each client’s record, then use the compliance calendar to create tasks.</span></div>`;return}
+    wrap.innerHTML=gridTableHtml(cols,rows,c=>`<div class="sm mut">${c.inchargeId?esc(uName(c.inchargeId)):''}${c.consultantId?`${c.inchargeId?' · ':''}<span class="cvia" title="Work received through this consultant">via ${esc(cName(c.consultantId))}</span>`:''}</div>`);
+    $$('#gWrap [data-g]').forEach(b=>b.onclick=()=>{const [ri,ci]=b.dataset.g.split('|').map(Number);this.cellClick(rows[ri].cells[ci])});
+    $$('#gWrap [data-gc]').forEach(a=>a.onclick=()=>clientModal(a.dataset.gc));
+  },
+  gid(x){return (x.c.id+'__'+x.code+'__'+x.per.key).replace(/[^A-Za-z0-9_\-]/g,'-')},
+  item(x,o={}){return {id:this.gid(x),title:x.t.name,clientId:x.c.id,category:x.t.cat,period:x.t.freq==='M'?monthLbl(x.per.key):x.t.freq==='Q'?`Q${x.per.q} FY ${fyLong(x.per.fy)}`:'FY '+fyLong(x.per.fy),dueDate:x.due,genKey:x.code+'|'+x.per.key,arn:o.arn||'',completedOn:o.completedOn||'',billable:!!o.billable,consultantId:x.c.consultantId||''}},
+  cellClick(x){
+    if(!x)return;
+    if(x.task){taskModal(x.task.id);return}
+    if(!can('generator')){toast('No task yet for this period – ask your manager to create it from the compliance calendar.',true);return}
+    const self=this,lbl=this.item(x).period;
+    const m=modal(`${esc(x.c.name)} · ${esc(x.t.name)}`,`<p>No task exists for <b>${esc(lbl)}</b> (due ${fD(x.due)}).</p>
+      <div class="f"><label>Filed on<input type="date" id="gmD" value="${x.due<today()?x.due:today()}"></label><label>ARN / acknowledgement no.<input id="gmA" placeholder="Optional"></label>
+      <label class="chk s2"><input type="checkbox" id="gmB"> Bill this work (add to unbilled fees)</label></div>`,
+      `<button class="btn" id="gmT">Create open task instead</button><span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="gmGo">Mark as filed</button>`,'nar');
+    m.querySelector('#gmGo').onclick=async()=>{const r=await run('markFiled',{items:[self.item(x,{completedOn:$('#gmD').value,arn:$('#gmA').value,billable:$('#gmB').checked})]},'Marked as filed');if(r)closeModal()};
+    m.querySelector('#gmT').onclick=async()=>{const it=self.item(x);delete it.arn;delete it.completedOn;delete it.billable;it.assigneeId=x.c.inchargeId||'';it.reviewerId='';it.priority='Medium';const r=await run('createTasks',{tasks:[it]},'Task created');if(r){closeModal();taskModal(it.id)}};
+  },
+  markModal(){
+    const {type,cols,rows}=this.last||this.model();
+    const self=this,d=new Date();d.setDate(0);const def=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const m=modal('Mark earlier periods as filed',`<p class="sm">For returns filed <b>before you started using the app</b>. Every box in the current view (<b>${esc(type.l)}</b>, FY ${fyLong(type.f==='A'?GF.fyA:GF.fy)}, ${rows.length} client(s)) that shows <b>✗ with no task</b> and is due on or before the date below is recorded as filed. Existing tasks are not touched.</p>
+      <div class="f"><label>Due on or before<input type="date" id="gbD" value="${def}"></label><label>Clients<select id="gbC">${opts([['','All clients in this view'],...rows.map(r=>[r.c.id,r.c.name])],'')}</select></label>
+      <label class="chk s2"><input type="checkbox" id="gbB"> Bill this work (normally leave unticked – already billed in your old system)</label></div><div class="note" id="gbN"></div>`,
+      `<span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="gbGo">Mark as filed</button>`);
+    const pick=()=>{const lim=$('#gbD').value,cid=$('#gbC').value;return rows.filter(r=>!cid||r.c.id===cid).flatMap(r=>r.cells.filter(x=>x&&x.s==='mi'&&!x.task&&x.due<=lim))};
+    const info=()=>{$('#gbN').innerHTML=`<b>${pick().length}</b> period(s) will be marked as filed (filing date = due date).`};
+    $('#gbD').onchange=info;$('#gbC').onchange=info;info();
+    m.querySelector('#gbGo').onclick=async()=>{const xs=pick();if(!xs.length){toast('Nothing to mark',true);return}
+      const r=await run('markFiled',{items:xs.map(x=>self.item(x,{completedOn:x.due,billable:$('#gbB').checked}))},xs.length+' period(s) marked as filed');if(r)closeModal()};
+  },
+  async excel(){
+    const {type,cols,rows}=this.last||this.model();
+    try{await loadXLSX()}catch(e){toast('Excel library could not load – check internet',true);return}
+    const W={ok:'Filed',ip:'In progress',od:'Overdue',mi:'Overdue',nd:'Not due',na:''};
+    const aoa=[[`${D.settings.firmName||DEFAULT_FIRM} – ${type.l} – FY ${fyLong(type.f==='A'?GF.fyA:GF.fy)}`],[],['Client','PAN','In-charge','Work through',...cols.map(c=>c.label)]];
+    rows.forEach(r=>aoa.push([r.c.name,r.c.pan||'',r.c.inchargeId?uName(r.c.inchargeId):'',r.c.consultantId?cName(r.c.consultantId):'Direct',...r.cells.map(x=>x?(W[x.s]+(x.task&&x.task.completedOn&&x.s==='ok'?' '+fD(x.task.completedOn):'')+(x.task&&x.task.arn?' · '+x.task.arn:'')):'N/A')]));
+    const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=[{wch:32},{wch:12},{wch:16},{wch:24},...cols.map(()=>({wch:16}))];
+    XLSX.utils.book_append_sheet(wb,ws,type.l.replace(/[^A-Za-z0-9 \-]/g,'').slice(0,28));XLSX.writeFile(wb,`Compliance-${type.k}-FY${fyLong(type.f==='A'?GF.fyA:GF.fy)}.xlsx`);
+  }
+};
+
 /* ---- automatic calendar (staff side) ---- */
 async function autoCalPreview(){
   const d=await run('autoCalPreview',{});if(!d||!d.info)return;const r=d.info;
