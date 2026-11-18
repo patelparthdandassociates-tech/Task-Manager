@@ -316,6 +316,7 @@ table.cap td,table.cap th{padding:7px 6px;font-size:12px}table.cap .we{backgroun
       <div class="lerr" id="lerr"></div>
       <div style="text-align:center"><button type="button" class="btn sm instBtn hidden" data-install>📲 Install the app on this phone</button></div>
       <div class="lfoot">🔒 Secure sign-in · Authorised firm personnel only · All activity is logged</div>
+      <div class="lfoot" id="lver" style="margin-top:4px;opacity:.75"></div>
     </form>
     <div class="lcopy" id="lcopy"></div>
   </section>
@@ -353,6 +354,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
    PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES (it ends with /exec)
    ================================================================================= */
 const DEFAULT_FIRM='Patel Parth D & Associates';
+const UI_VERSION='8.5';
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbywXUukgpnngf8Gj1D-2T2A2J-7qSz76Ep3a1Da5h-Ca3mJ2SwyTVjL1f9Vn1UnHLjdHg/exec';
 
 /* ---------------- constants ---------------- */
@@ -574,7 +576,7 @@ function showApp(){
   $('#login').classList.add('hidden');$('#app').classList.remove('hidden');
   $('#sFirm').textContent=D.settings.firmName||DEFAULT_FIRM;document.title=(D.settings.firmName?D.settings.firmName+' · ':'')+'Practice Manager';
   $('#av').textContent=initials(D.me.name);$('#uNm').textContent=D.me.name;$('#uRl').textContent=ROLE_LABEL[D.me.role];
-  $('#sFoot').textContent='Signed in as '+D.me.username+' · v'+(D.serverVersion||'');
+  const sv=D.serverVersion||'?';$('#sFoot').innerHTML=esc('Signed in as '+D.me.username)+'<br>Version '+(sv===UI_VERSION?'<b>v'+UI_VERSION+'</b> ✓':'screens <b>v'+UI_VERSION+'</b> · server <b>v'+esc(sv)+'</b> <span style="color:#ffb4a8">⚠ update '+(sv<UI_VERSION?'Code.gs':'index.html')+'</span>');
   $('#sync').textContent='Synced '+lastSync.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
   document.body.classList.toggle('viewer',isViewer());
   let vb=$('#vbanner');if(isViewer()&&!vb){vb=document.createElement('div');vb.id='vbanner';vb.className='vbanner';vb.textContent='👁 View-only Admin – you can see every report, register and invoice. Changes are made by the Super Admin.';$('.top').after(vb)}else if(!isViewer()&&vb)vb.remove();
@@ -2334,7 +2336,7 @@ async function renderPortal(){
   el.innerHTML=`<div class="pwrap"><div class="pcard" style="${cons?'width:min(1000px,100%)':''}"><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><img class="lmini" style="margin:0" src="${logo}"><div style="flex:1;min-width:200px"><div class="sm mut">${esc(firm)}</div><h2 style="margin:2px 0 0;font-size:20px">${cons?'Consultant workspace – '+esc(info.client):'Upload documents'}</h2></div>
    ${sess?`<div style="text-align:right"><div class="sm mut" style="margin-bottom:4px">Signed in as <b>${esc(D.me.username)}</b></div><button class="btn sm" id="pRf" title="Refresh">↻ Refresh</button> <button class="btn sm" id="pPw">Change password</button> <button class="btn sm" id="pOut">Sign out</button><br><button class="btn sm instBtn hidden" data-install>📲 Install app</button></div>`:''}</div>
    ${cons?`<div class="tabs" style="margin-top:16px">${tabs.map(([k,l])=>`<button data-pt="${k}" class="${cur===k?'on':''}">${l}${badge(k)}</button>`).join('')}</div>`:''}
-   ${body}<div id="poMsg" class="sm" style="margin-top:12px"></div><div class="lfoot" style="margin-top:18px">${sess?`🔒 You see only the work you have sent to ${esc(firm)}. All activity is logged. Sign out on shared computers.`:`🔒 Secure link from ${esc(firm)}. Do not forward it. Files go directly to the firm’s secure storage.`}</div></div></div>`;
+   ${body}<div id="poMsg" class="sm" style="margin-top:12px"></div><div class="lfoot" style="margin-top:18px">${sess?`🔒 You see only the work you have sent to ${esc(firm)}. All activity is logged. Sign out on shared computers. · v${UI_VERSION}`:`🔒 Secure link from ${esc(firm)}. Do not forward it. Files go directly to the firm’s secure storage.`}</div></div></div>`;
   $$('#portal [data-pt]').forEach(b=>b.onclick=()=>{el.dataset.tab=b.dataset.pt;renderPortal()});
   const msg=h=>{const m=$('#poMsg');if(m)m.innerHTML=h};
   const up=async(f,taskId,idx,extra)=>{if(!f)return;if(f.size>10*1024*1024){toast('File is larger than 10 MB',true);return}
@@ -2381,6 +2383,7 @@ setInterval(()=>{if(D&&TOKEN&&D.me.role!=='consultant'&&document.visibilityState
 document.addEventListener('visibilitychange',()=>{if(D&&TOKEN&&D.me.role!=='consultant'&&document.visibilityState==='visible'&&!$('.mb'))refresh(true)});
 window.addEventListener('afterprint',()=>{$('#printArea').innerHTML=''});
 showInstall();netBar();
+{const lv=$('#lver');if(lv)lv.textContent='Version v'+UI_VERSION}
 if(UPTOKEN)renderPortal();
 else if(TOKEN){showLogin('');$('#lerr').textContent='Restoring your session…';refresh().then(()=>{if(!D)showLogin('')})}else showLogin('');
 </script>
