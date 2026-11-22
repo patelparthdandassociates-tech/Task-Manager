@@ -282,6 +282,8 @@ button.gc{cursor:pointer}button.gc:hover{outline:2px solid var(--teal)}
 .prow{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}
 .pnl,.pnh{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.6fr) minmax(0,1.35fr) 34px;gap:8px;margin-bottom:8px;align-items:center}.pnh{margin-bottom:4px}.pnl input,.pnl select{width:100%}
 @media (max-width:640px){.pnh{display:none}.pnl{grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;padding:8px}.pnl .plX{justify-self:end}}
+.qls{display:flex;flex-direction:column;gap:8px}.qlr{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px}.qln{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:0 0 auto}.btn.done{background:var(--greenSoft);color:var(--green);border-color:transparent}
+.drow{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}.drow:last-child{border-bottom:0}.lnkrow{cursor:pointer}.lnkrow:hover{background:var(--soft)}
 .msgs{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:8px}.msg{background:#f1f4f8;border-radius:10px;padding:8px 11px;max-width:85%;align-self:flex-start;font-size:13px}.msg.me{background:#e5f3f0;align-self:flex-end}.msg.int{background:#fff5e0}
 .lnkb{background:none;border:0;color:var(--teal);cursor:pointer;font:inherit;font-size:12.5px;padding:6px 0}
 a.btn{text-decoration:none;color:inherit}.btn.wa{background:#1fa855;border-color:#1fa855;color:#fff!important}.btn.wa:hover{background:#178a45}
@@ -367,7 +369,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
    PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES (it ends with /exec)
    ================================================================================= */
 const DEFAULT_FIRM='Patel Parth D & Associates';
-const UI_VERSION='9.0';
+const UI_VERSION='9.2';
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbywXUukgpnngf8Gj1D-2T2A2J-7qSz76Ep3a1Da5h-Ca3mJ2SwyTVjL1f9Vn1UnHLjdHg/exec';
 
 /* ---------------- constants ---------------- */
@@ -380,7 +382,7 @@ const isViewer=()=>!!(D&&D.me&&D.me.role==='viewer');
 const STATUSES=['Not Started','In Progress','Pending from Client','Under Review','Completed'];
 const ST_CLS={'Not Started':'p-gray','In Progress':'p-blue','Pending from Client':'p-amber','Under Review':'p-purple','Completed':'p-green'};
 const PRIORITIES=['High','Medium','Low'];
-const CATEGORIES=['GST','TDS / TCS','Income Tax','Tax Audit','Transfer Pricing','Statutory Audit','Internal Audit','ROC / MCA','Payroll (PF/ESI/PT)','Accounting','Certification','Litigation / Notices','FEMA / RBI','Advisory','Other'];
+const CATEGORIES=['Office / Internal','GST','TDS / TCS','Income Tax','Tax Audit','Transfer Pricing','Statutory Audit','Internal Audit','ROC / MCA','Payroll (PF/ESI/PT)','Accounting','Certification','Litigation / Notices','FEMA / RBI','Advisory','Other'];
 const SERVICES=['GST Monthly','GST QRMP','GST Composition','TDS','TCS','Advance Tax','ITR','Tax Audit','Transfer Pricing','ROC Company','ROC LLP','PF/ESI','Accounting','Statutory Audit','Internal Audit'];
 const CLIENT_TYPES=['Company (Private)','Company (Listed)','Company (Public unlisted)','LLP','Partnership Firm','Proprietorship','Individual','HUF','Trust / Society','AOP / BOI','Other'];
 const STATES={'01':'Jammu & Kashmir','02':'Himachal Pradesh','03':'Punjab','04':'Chandigarh','05':'Uttarakhand','06':'Haryana','07':'Delhi','08':'Rajasthan','09':'Uttar Pradesh','10':'Bihar','11':'Sikkim','12':'Arunachal Pradesh','13':'Nagaland','14':'Manipur','15':'Mizoram','16':'Tripura','17':'Meghalaya','18':'Assam','19':'West Bengal','20':'Jharkhand','21':'Odisha','22':'Chhattisgarh','23':'Madhya Pradesh','24':'Gujarat','26':'Dadra & Nagar Haveli and Daman & Diu','27':'Maharashtra','29':'Karnataka','30':'Goa','31':'Lakshadweep','32':'Kerala','33':'Tamil Nadu','34':'Puducherry','35':'Andaman & Nicobar Islands','36':'Telangana','37':'Andhra Pradesh','38':'Ladakh','97':'Other Territory'};
@@ -418,7 +420,7 @@ const TPL=[
  {code:'LLP8',name:'LLP Form 8 Statement of account & solvency',cat:'ROC / MCA',freq:'A',a:[10,30,1],svc:['ROC LLP'],ref:MCA_U,note:'30th October after the FY.'},
  {code:'STAUD',name:'Statutory audit – sign-off (internal target)',cat:'Statutory Audit',freq:'A',a:[9,1,1],svc:['Statutory Audit'],ref:MCA_U,note:'Internal target, not statutory.'},
 ];
-const ICON={dashboard:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',tasks:'M9 11l3 3 8-8M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9',board:'M3 3h5v18H3zM10 3h5v12h-5zM17 3h4v8h-4z',
+const ICON={dashboard:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',desk:'M4 4h16v12H4zM8 20h8M12 16v4M8 8h8M8 12h5',tasks:'M9 11l3 3 8-8M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9',board:'M3 3h5v18H3zM10 3h5v12h-5zM17 3h4v8h-4z',
  clients:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',calendar:'M3 5h18v16H3zM16 3v4M8 3v4M3 10h18',grid:'M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18',
  expenses:'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6',invoices:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8',receipts:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3',
  reports:'M18 20V10M12 20V4M6 20v-6',users:'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM19 8v6M22 11h-6',settings:'M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z',
@@ -427,7 +429,7 @@ const ICON={dashboard:'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z',tasks
  retainers:'M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3',udin:'M12 15a7 7 0 100-14 7 7 0 000 14zM8.2 13.9L7 23l5-3 5 3-1.2-9.1',
  dsc:'M15.5 7.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zM12 11v11M12 17h4M12 20h3',vault:'M5 11h14v10H5zM8 11V7a4 4 0 018 0v4M12 15v2',consultants:'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM17 11l2 2 4-4',exports:'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5',yearend:'M3 5h18v16H3zM16 3v4M8 3v4M3 10h18M8 15l3 3 5-6',import:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12'};
 const NAV=[
- {g:'Work'},{v:'dashboard',l:'Dashboard'},{v:'tasks',l:'Tasks'},{v:'board',l:'Workflow board'},{v:'calendar',l:'Compliance calendar',p:'generator'},{v:'grid',l:'Compliance grid'},{v:'notices',l:'Notices & litigation'},{v:'leave',l:'Leave & capacity'},
+ {g:'Work'},{v:'dashboard',l:'Dashboard'},{v:'desk',l:'Team desk'},{v:'tasks',l:'Tasks'},{v:'board',l:'Workflow board'},{v:'calendar',l:'Compliance calendar',p:'generator'},{v:'grid',l:'Compliance grid'},{v:'notices',l:'Notices & litigation'},{v:'leave',l:'Leave & capacity'},
  {g:'Clients & billing'},{v:'clients',l:'Clients'},{v:'consultants',l:'Consultants'},{v:'expenses',l:'Expenses & claims'},{v:'invoices',l:'Invoices',p:'billView'},{v:'retainers',l:'Retainer billing',p:'billEdit'},{v:'receipts',l:'Receipts',p:'billView'},{v:'reports',l:'Reports',p:'billView'},{v:'exports',l:'Tally, GSTR-1 & TDS',p:'billView'},
  {g:'Registers'},{v:'udin',l:'UDIN register',p:'udinView'},{v:'dsc',l:'DSC register'},{v:'vault',l:'Credentials vault',p:'vault'},
  {g:'Administration',p:'audit'},{v:'users',l:'Users & roles',p:'users'},{v:'settings',l:'Firm settings',p:'settings'},{v:'import',l:'Import data',p:'users'},{v:'yearend',l:'Year-end close',p:'settings'},{v:'audit',l:'Audit trail',p:'audit'}];
@@ -1533,6 +1535,11 @@ const STAGES=['Notice received','Documents being collected','Reply filed','Heari
 const ENG_TYPES=['Statutory audit','Tax audit','Internal audit','GST audit / reconciliation','Transfer pricing','Certification','Other assurance'];
 const ACC_ITEMS=['Client KYC obtained (PAN, incorporation documents, address proof)','Independence and conflict-of-interest check completed','Written communication sent to the previous auditor (reply / NOC received)','Ceiling on number of company audits checked','Engagement letter issued and accepted by client','Audit fee agreed','Appointment letter / board resolution received','Intimation to ROC (ADT-1) filed, if applicable','Team competence & capacity assessed','Client risk assessment (acceptance / continuance) documented'];
 const LEAVE_TYPES=['Casual leave','Sick leave','Earned / privilege leave','Exam / study leave','Work from home','Other'];
+const PORTAL_URL={'GST portal':'https://services.gst.gov.in/services/login','Income-tax e-filing':'https://eportal.incometax.gov.in/iec/foservices/#/login','TRACES':'https://www.tdscpc.gov.in/app/login.xhtml',
+  'MCA V3 – company / business user':'https://www.mca.gov.in/','MCA V3 – professional (consultant) user':'https://www.mca.gov.in/','EPFO employer portal':'https://unifiedportal-emp.epfindia.gov.in/epfo/','ESIC portal':'https://www.esic.gov.in/',
+  'Professional tax / MahaGST':'https://www.mahagst.gov.in/en/log-e-services','ICEGATE':'https://www.icegate.gov.in/','DGFT':'https://www.dgft.gov.in/CP/','Udyam / MSME':'https://udyamregistration.gov.in/',
+  'E-way bill / e-invoice portal':'https://ewaybillgst.gov.in/','Gmail / email':'https://mail.google.com/','ICAI / UDIN portal':'https://udin.icai.org/'};
+const PORTAL_TIP={'MCA V3 – company / business user':'Click “Sign In” on the MCA home page.','MCA V3 – professional (consultant) user':'Click “Sign In” on the MCA home page.','ESIC portal':'Click “Employer Login” on the ESIC home page.','ICEGATE':'Click “Login / Sign Up” on the ICEGATE home page.','Professional tax / MahaGST':'Choose the PT Act login on the page.','Income-tax e-filing':'Enter the ID, continue, tick the secure-access message, then the password.'};
 const VAULT_PORTALS=['GST portal','Income-tax e-filing','TRACES','MCA V3 – company / business user','MCA V3 – professional (consultant) user','EPFO employer portal','ESIC portal','Professional tax / MahaGST','ICEGATE','DGFT','Udyam / MSME','E-way bill / e-invoice portal','Bank net-banking','Gmail / email','ICAI / UDIN portal','Other'];
 
 /* ---------------- documents on Drive ---------------- */
@@ -1876,7 +1883,7 @@ VIEWS.vault={
     const q=VF.q.trim().toLowerCase();
     const rows=D.vault.filter(x=>(!VF.scope||x.scope===VF.scope)&&(!VF.client||x.clientId===VF.client)&&(!q||[x.portal,x.label,cName(x.clientId)].join(' ').toLowerCase().includes(q))).sort((a,b)=>(cName(a.clientId)+a.portal).localeCompare(cName(b.clientId)+b.portal));
     $('#vb').innerHTML=rows.map(x=>`<tr data-id="${x.id}"><td>${x.scope==='firm'?pill('Firm / consultant','p-purple'):pill('Client','p-teal')}</td><td>${x.scope==='firm'?'<span class="mut">—</span>':esc(cName(x.clientId))+(x.consent==='Yes'?' <span class="sm" style="color:var(--green)" title="Client consent obtained">✓ consent</span>':' <span class="sm soon" title="Client consent not recorded">no consent</span>')}</td><td><b>${esc(x.portal)}</b></td><td>${esc(x.label)}</td><td class="sm mut">${fDT(x.updatedAt)} · ${esc(uName(x.updatedBy))}</td>
-      <td style="white-space:nowrap"><button class="btn sm" data-v="view">👁 View</button> <button class="btn sm" data-v="copy-user">Copy ID</button> <button class="btn sm" data-v="copy-password">Copy password</button> <button class="btn sm" data-v="edit">Edit</button></td></tr>`).join('');
+      <td style="white-space:nowrap"><button class="btn sm pri" data-v="quick" title="Open portal, copy ID and password">⚡ Login</button> <button class="btn sm" data-v="view">👁 View</button> <button class="btn sm" data-v="copy-user">Copy ID</button> <button class="btn sm" data-v="copy-password">Copy password</button> <button class="btn sm" data-v="edit">Edit</button></td></tr>`).join('');
     $('#ve').classList.toggle('hidden',rows.length>0);
     $$('#vb [data-v]').forEach(b=>b.onclick=()=>vaultAct(b.closest('tr').dataset.id,b.dataset.v));
   }
@@ -1886,6 +1893,7 @@ async function vaultAct(id,what){
   const x=D.vault.find(r=>r.id===id);if(!x)return;
   let o;try{o=await vDec(VKEY,x.cipher,x.iv)}catch(e){toast('Could not decrypt this entry (it was saved with a different passphrase).',true);return}
   if(what==='edit'){vaultModal(x,o);return}
+  if(what==='quick'){quickLogin(x,o);return}
   try{await call('vaultLog',{id,what})}catch(e){handleErr(e);return}
   if(what==='view'){
     const m=modal(esc(x.portal)+(x.label?' – '+esc(x.label):''),`<div class="f"><label class="s2">Login ID / username<input value="${esc(o.username)}" readonly></label><label class="s2">Password<input value="${esc(o.password)}" readonly style="font-family:monospace"></label>
@@ -1894,8 +1902,35 @@ async function vaultAct(id,what){
     const t=setTimeout(()=>{if(m.isConnected)closeModal()},30000);m.querySelector('[data-x]').addEventListener('click',()=>clearTimeout(t));return;
   }
   const val=what==='copy-user'?o.username:o.password;
-  try{await navigator.clipboard.writeText(val||'');toast((what==='copy-user'?'Login ID':'Password')+' copied');if(what==='copy-password')setTimeout(()=>navigator.clipboard.writeText('').catch(()=>{}),30000)}
+  try{await navigator.clipboard.writeText(val||'');toast((what==='copy-user'?'Login ID':'Password')+' copied');if(what==='copy-password')clipClearLater()}
   catch(e){toast('Copy blocked by the browser — use View instead',true)}
+}
+let CLIP_AT=0;
+function clipClearLater(){CLIP_AT=Date.now()+30000;setTimeout(clipTryClear,30500)}
+function clipTryClear(){if(!CLIP_AT||Date.now()<CLIP_AT)return;navigator.clipboard.writeText('').then(()=>{CLIP_AT=0}).catch(()=>{})}
+window.addEventListener('focus',clipTryClear);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')clipTryClear()});
+function quickLogin(x,o){
+  const url=(o.url||'').trim()||PORTAL_URL[x.portal]||'',who=x.scope==='firm'?'Firm / consultant login':cName(x.clientId),tip=PORTAL_TIP[x.portal]||'';
+  const safe=/^https:\/\//i.test(url);
+  const m=modal('⚡ Quick login',`<div style="display:flex;gap:10px;align-items:center;margin-bottom:12px"><div style="flex:1"><div class="sm mut">${esc(who)}</div><b style="font-size:16px">${esc(x.portal)}</b>${x.label?` <span class="sm mut">· ${esc(x.label)}</span>`:''}</div></div>
+    <div class="qls">
+     <div class="qlr"><span class="qln">1</span><div style="flex:1"><b>Open the portal</b><div class="sm mut">${url?esc(url.replace(/^https?:\/\//,'').slice(0,60)):'No website saved for this login.'}${tip?'<br>'+esc(tip):''}</div></div>${url&&safe?'<button class="btn pri" id="qlO">🔗 Open portal</button>':url?'<span class="sm over">Only https:// links can be opened</span>':'<button class="btn" id="qlE">Add website</button>'}</div>
+     <div class="qlr"><span class="qln">2</span><div style="flex:1"><b>Copy login ID</b><div class="sm mut">${esc(o.username||'—')}</div></div><button class="btn" id="qlU">📋 Copy ID</button></div>
+     <div class="qlr"><span class="qln">3</span><div style="flex:1"><b>Copy password</b><div class="sm mut" id="qlPN">Cleared from the clipboard 30 seconds after copying.</div></div><button class="btn" id="qlP">🔑 Copy password</button></div>
+     ${o.extra?`<div class="qlr"><span class="qln">i</span><div style="flex:1"><b>Other details</b><div class="sm mut" id="qlX">Hidden – security answer / PIN / registered mobile</div></div><button class="btn sm" id="qlXB">Show</button></div>`:''}
+    </div>
+    <p class="sm mut" style="margin-top:12px">Paste the ID and password on the portal, then enter the captcha / OTP yourself. Each step is recorded in the audit trail.</p>`,
+    `<button class="btn" id="qlEd">Edit login</button><span class="grow"></span><button class="btn" data-x>Close</button>`,'nar');
+  const done=(b,t)=>{b.textContent='✓ '+t;b.classList.remove('pri');b.classList.add('done')};
+  const log=async w=>{try{await call('vaultLog',{id:x.id,what:w});return true}catch(e){handleErr(e);return false}};
+  let idle=setTimeout(()=>{if(m.isConnected)closeModal()},120000);const touch=()=>{clearTimeout(idle);idle=setTimeout(()=>{if(m.isConnected)closeModal()},120000)};
+  const ob=m.querySelector('#qlO');if(ob)ob.onclick=async()=>{touch();const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();a.remove();done(ob,'Opened');log('open-portal')};
+  const eb=m.querySelector('#qlE');if(eb)eb.onclick=()=>vaultModal(x,o);
+  m.querySelector('#qlEd').onclick=()=>vaultModal(x,o);
+  m.querySelector('#qlU').onclick=async e=>{touch();if(!(await log('copy-user')))return;try{await navigator.clipboard.writeText(o.username||'');done(e.target,'ID copied')}catch(err){toast('Copy blocked by the browser – use View instead',true)}};
+  m.querySelector('#qlP').onclick=async e=>{touch();if(!(await log('copy-password')))return;try{await navigator.clipboard.writeText(o.password||'');done(e.target,'Password copied');clipClearLater();let n=30;const pn=m.querySelector('#qlPN');const iv=setInterval(()=>{n--;if(!m.isConnected||n<=0){clearInterval(iv);if(pn)pn.textContent='Clipboard cleared (or will be cleared when you return to this tab).';return}if(pn)pn.textContent='Clipboard will be cleared in '+n+' s';},1000)}catch(err){toast('Copy blocked by the browser – use View instead',true)}};
+  const xb=m.querySelector('#qlXB');if(xb)xb.onclick=async()=>{touch();if(!(await log('view')))return;m.querySelector('#qlX').textContent=o.extra;xb.remove()};
+  m.querySelector('[data-x]').addEventListener('click',()=>clearTimeout(idle));
 }
 function vaultModal(x,o){
   o=o||{username:'',password:'',url:'',extra:'',notes:''};
@@ -1906,7 +1941,7 @@ function vaultModal(x,o){
     <label>Portal<select id="vP">${opts(VAULT_PORTALS,v.portal)}</select></label><label>Label (e.g. GSTIN, PAN, user name)<input id="vL" value="${esc(v.label)}"></label>
     <label>Login ID / username<input id="vU" value="${esc(o.username)}" autocomplete="off"></label><label>Password<span style="display:flex;gap:6px"><input id="vW" type="password" value="${esc(o.password)}" autocomplete="new-password" style="flex:1"><button class="btn sm" id="vEye" type="button">Show</button></span></label>
     <label class="chk s2" id="vConL"><input type="checkbox" id="vCon" ${v.consent==='Yes'?'checked':''}> Client’s written consent obtained to hold this login</label>
-    <label class="s2">Website (optional)<input id="vUrl" value="${esc(o.url)}" placeholder="https://"></label>
+    <label class="s2">Website (optional – leave blank to use the official login page)<input id="vUrl" value="${esc(o.url)}" placeholder="${esc(PORTAL_URL[v.portal]||'https://')}"></label>
     <label class="s2">Other (security questions, PIN, registered mobile)<textarea id="vX" rows="2">${esc(o.extra)}</textarea></label><label class="s2">Notes<textarea id="vN" rows="2">${esc(o.notes)}</textarea></label></div>
     <p class="sm mut">Portal, client and label are stored in plain text so the list can be searched. Login ID, password and the other fields are encrypted.</p>`,
     `${x?'<button class="btn dan" id="vDel">Delete</button>':''}<span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="vSave">Encrypt & save</button>`);
@@ -2602,6 +2637,82 @@ VIEWS.grid={
     const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=[{wch:32},{wch:12},{wch:16},{wch:24},...cols.map(()=>({wch:16}))];
     XLSX.utils.book_append_sheet(wb,ws,type.l.replace(/[^A-Za-z0-9 \-]/g,'').slice(0,28));XLSX.writeFile(wb,`Compliance-${type.k}-FY${fyLong(type.f==='A'?GF.fyA:GF.fy)}.xlsx`);
   }
+};
+
+/* ---------------- Team desk (v9.2) ---------------- */
+const DESK_CAT='Office / Internal';
+const DESK_CHIPS=['Courier','Bank visit','Collect documents','DSC renewal','Client follow-up call','Govt. office visit'];
+const isDesk=t=>t.category===DESK_CAT||!t.clientId;
+const awayOn=(uid,d)=>(D.away||[]).find(a=>a.userId===uid&&a.from<=d&&a.to>=d);
+const prLbl=p=>p==='High'?'P1':p==='Low'?'P3':'P2';
+const prPill=p=>pill(prLbl(p),p==='High'?'p-red':p==='Low'?'p-gray':'p-amber');
+function deskParse(txt){
+  let s=' '+txt+' ',assignee=D.me.id,who=null,clientId='',pr='Medium',due='';
+  s=s.replace(/\s!(p1|high|urgent)\b/ig,()=>{pr='High';return ' '}).replace(/\s!(p2|med|medium)\b/ig,()=>{pr='Medium';return ' '}).replace(/\s!(p3|low)\b/ig,()=>{pr='Low';return ' '});
+  s=s.replace(/\s@([A-Za-z][\w.]*)/g,(m,n)=>{const q=n.toLowerCase(),u=activeUsers().find(x=>String(x.username||'').toLowerCase()===q)||activeUsers().find(x=>String(x.name||'').toLowerCase().split(/\s+/).some(w=>w.startsWith(q)));if(u){assignee=u.id;who=u;return ' '}return m});
+  s=s.replace(/\s#([A-Za-z][\w&.-]*)/g,(m,n)=>{const q=n.toLowerCase(),c=activeClients().find(x=>x.name.toLowerCase().startsWith(q))||activeClients().find(x=>x.name.toLowerCase().includes(q));if(c){clientId=c.id;return ' '+c.name+' '}return m});
+  const td=today(),wd=['sun','mon','tue','wed','thu','fri','sat'],mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  s=s.replace(/\s(today|tod)\b/i,()=>{due=td;return ' '}).replace(/\s(tomorrow|tmrw|tmr)\b/i,()=>{due=addDays(td,1);return ' '});
+  if(!due)s=s.replace(/\s(sun|mon|tue|wed|thu|fri|sat)[a-z]*\b/i,(m,w)=>{const n=wd.indexOf(w.toLowerCase()),c=pD(td).getDay();due=addDays(td,((n-c+7)%7)||7);return ' '});
+  if(!due)s=s.replace(/\s(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?\b/,(m,d,mm,y)=>{const t=new Date();let yy=y?(+y<100?2000+ +y:+y):t.getFullYear();let r=`${yy}-${pad(+mm)}-${pad(+d)}`;if(!y&&r<td)r=`${yy+1}-${pad(+mm)}-${pad(+d)}`;due=r;return ' '});
+  if(!due)s=s.replace(/\s(\d{1,2})\s?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/i,(m,d,mn)=>{const t=new Date();let r=`${t.getFullYear()}-${pad(mo.indexOf(mn.toLowerCase())+1)}-${pad(+d)}`;if(r<td)r=`${t.getFullYear()+1}${r.slice(4)}`;due=r;return ' '});
+  if(!due)due=pr==='High'?td:addDays(td,pr==='Low'?7:3);
+  return {title:s.replace(/\s+/g,' ').trim(),assigneeId:assignee,clientId,priority:pr,dueDate:due};
+}
+VIEWS.desk={
+  mount(el){
+    el.innerHTML=`<div class="card" style="padding:12px 14px;margin-bottom:12px">${isViewer()?'<div class="sm mut">View-only access – you can see the Team desk but not add tasks.</div>':`
+      <div style="display:flex;gap:8px;align-items:center"><span style="font-size:18px">⚡</span><input id="dkQ" placeholder="e.g. Collect DSC from #Om @Sam tomorrow !p1" style="flex:1" autocomplete="off"><button class="btn pri" id="dkGo">Add</button></div>
+      <div class="sm mut" id="dkPv" style="margin:6px 0 0 30px;min-height:18px">Type the work, then <b>@person</b>, a day (<b>today</b>, <b>tomorrow</b>, <b>fri</b>, <b>25/11</b>), <b>!p1 / !p2 / !p3</b> and optional <b>#client</b>.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0 30px">${DESK_CHIPS.map(c=>`<button class="btn sm" data-dc="${esc(c)}">${esc(c)}</button>`).join('')}</div>`}</div>
+     <div class="kpis" id="dkK"></div>
+     <div class="g2" style="margin-top:12px"><div class="card"><div class="hd"><h3>Assigned to me</h3></div><div class="bd" id="dkMe"></div></div><div class="card"><div class="hd"><h3>Assigned by me</h3></div><div class="bd" id="dkBy"></div></div></div>
+     <div class="g2" style="margin-top:12px">${can('tasksAll')?'<div class="card"><div class="hd"><h3>Team load <span class="sm mut" style="font-weight:400">· open internal items</span></h3></div><div class="bd" id="dkLoad"></div></div>':''}<div class="card"><div class="hd"><h3>Notice board</h3>${can('tasksEdit')&&!isViewer()?'<button class="btn sm" id="dkN">+ Notice</button>':''}</div><div class="bd" id="dkB"></div></div></div>`;
+    const q=$('#dkQ');
+    if(q){const pv=()=>{if(!q.value.trim()){$('#dkPv').innerHTML='Type the work, then <b>@person</b>, a day (<b>today</b>, <b>tomorrow</b>, <b>fri</b>, <b>25/11</b>), <b>!p1 / !p2 / !p3</b> and optional <b>#client</b>.';return}const r=deskParse(q.value);
+        $('#dkPv').innerHTML=`→ <b>${esc(r.title||'…')}</b> · ${esc(r.assigneeId===D.me.id?'Me':uName(r.assigneeId))} · ${fD(r.dueDate)} · ${prLbl(r.priority)}${r.clientId?' · '+esc(cName(r.clientId)):''}${awayOn(r.assigneeId,r.dueDate)?' · <span class="over">🌴 on leave that day</span>':''}`};
+      q.oninput=pv;q.onkeydown=e=>{if(e.key==='Enter')this.add()};$('#dkGo').onclick=()=>this.add();
+      $$('[data-dc]').forEach(b=>b.onclick=()=>{q.value=b.dataset.dc+' '+q.value.replace(new RegExp('^('+DESK_CHIPS.map(x=>x.replace(/[.]/g,'\\.')).join('|')+')\\s*'),'');q.focus();pv()})}
+    const nb=$('#dkN');if(nb)nb.onclick=()=>this.notice();
+    if(CUR===this)this.draw();
+  },
+  update(){this.draw()},
+  async add(){const q=$('#dkQ');if(!q.value.trim())return;const r=deskParse(q.value);if(!r.title){toast('Type what needs to be done',true);return}
+    const x=await run('deskAdd',r,r.assigneeId===D.me.id?'Added to your list':'Sent to '+uName(r.assigneeId));if(x){q.value='';q.dispatchEvent(new Event('input'))}},
+  draw(){
+    const me=D.me.id,td=today(),T=D.tasks.filter(isDesk),open=T.filter(t=>t.status!=='Completed');
+    const mine=open.filter(t=>t.assigneeId===me).sort((a,b)=>(a.dueDate||'9')<(b.dueDate||'9')?-1:1);
+    const by=T.filter(t=>t.createdBy===me&&t.assigneeId!==me&&(t.status!=='Completed'||days(t.completedOn||td)>=-3)).sort((a,b)=>(a.status==='Completed')-(b.status==='Completed')||((a.dueDate||'9')<(b.dueDate||'9')?-1:1));
+    const od=open.filter(t=>(t.assigneeId===me||t.createdBy===me)&&t.dueDate&&t.dueDate<td).length,dt=mine.filter(t=>t.dueDate===td).length;
+    const k=$('#dkK');if(!k)return;
+    k.innerHTML=[['Assigned to me',mine.length,''],['Assigned by me',by.filter(t=>t.status!=='Completed').length,''],['Overdue',od,od?'red':''],['Due today',dt,dt?'amber':'']].map(x=>`<div class="kpi ${x[2]}"><div class="l">${x[0]}</div><div class="n">${x[1]}</div></div>`).join('');
+    const due=t=>{const n=t.dueDate?days(t.dueDate):null;return n==null?'':n<0?pill(Math.abs(n)+'d overdue','p-red'):n===0?pill('Today','p-red'):n===1?pill('Tomorrow','p-amber'):`<span class="sm mut">${fD(t.dueDate)}</span>`};
+    $('#dkMe').innerHTML=mine.length?mine.map(t=>`<div class="drow"><input type="checkbox" data-dd="${esc(t.id)}" title="Mark done" ${isViewer()?'disabled':''}><div style="flex:1;min-width:0"><span class="lnk" data-dt="${esc(t.id)}">${esc(t.title)}</span>${t.clientId&&!t.title.includes(cName(t.clientId))?` <span class="sm mut">· ${esc(cName(t.clientId))}</span>`:''}<div class="sm mut">${t.createdBy&&t.createdBy!==me?'From '+esc(uName(t.createdBy)):'Self'}</div></div>${prPill(t.priority)} ${due(t)}</div>`).join(''):'<div class="sm mut">Nothing on your list. 🎉</div>';
+    $('#dkBy').innerHTML=by.length?by.map(t=>{const aw=t.status!=='Completed'&&awayOn(t.assigneeId,td);return `<div class="drow" style="${t.status==='Completed'?'opacity:.55':''}"><div style="flex:1;min-width:0"><span class="lnk" data-dt="${esc(t.id)}">${esc(t.title)}</span><div class="sm mut">${esc(uName(t.assigneeId))}${aw?` <span class="over">🌴 on leave till ${fD(aw.to)}</span>`:''}</div></div>
+      ${t.status==='Completed'?pill('Done','p-green'):`${due(t)} ${isViewer()?'':`<button class="btn sm ${aw?'pri':''}" data-dr="${esc(t.id)}" title="Give to someone else">↔</button> <button class="btn sm" data-dn="${esc(t.id)}">Nudge</button>`}`}</div>`}).join(''):'<div class="sm mut">Tasks you give to colleagues appear here.</div>';
+    const ld=$('#dkLoad');if(ld){const us=activeUsers();const mx=Math.max(1,...us.map(u=>open.filter(t=>t.assigneeId===u.id).length));
+      ld.innerHTML=us.map(u=>{const n=open.filter(t=>t.assigneeId===u.id),o=n.filter(t=>t.dueDate&&t.dueDate<td).length,aw=awayOn(u.id,td);return `<div class="drow lnkrow" data-du="${esc(u.id)}"><span style="width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}${aw?' 🌴':''}</span><div style="flex:1;height:8px;background:var(--graySoft);border-radius:4px"><div style="width:${Math.round(100*n.length/mx)}%;height:8px;background:var(--teal);border-radius:4px"></div></div><b style="width:22px;text-align:right">${n.length}</b>${o?pill(o+' overdue','p-red'):''}</div>`}).join('')||'<div class="sm mut">No team members.</div>'}
+    const bd=(D.board||[]).slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||(a.at<b.at?1:-1)),mgr=can('tasksEdit')&&!isViewer(),nu=activeUsers().length;
+    $('#dkB').innerHTML=bd.length?bd.map(n=>{const seen=(n.seen||[]).includes(me);return `<div class="drow" style="align-items:flex-start;${seen?'':'background:var(--amberSoft,#fff7e6);margin:0 -14px;padding:8px 14px'}"><span>${n.pinned?'📌':'•'}</span><div style="flex:1"><div>${esc(n.text)}</div><div class="sm mut">${esc(uName(n.by))} · ${fDT(n.at)}${n.until?' · till '+fD(n.until):''}${mgr?` · <span class="lnk" data-bs="${esc(n.id)}" title="${esc((n.seen||[]).map(uName).join(', '))}">seen ${(n.seen||[]).length}/${nu}</span>`:''}</div></div>${seen?'':`<button class="btn sm" data-bk="${esc(n.id)}">✓ Seen</button>`}${mgr?`<button class="btn sm" data-be="${esc(n.id)}">Edit</button>`:''}</div>`}).join(''):'<div class="sm mut">No notices.</div>';
+    $$('#view [data-dt]').forEach(a=>a.onclick=()=>taskModal(a.dataset.dt));
+    $$('#view [data-dd]').forEach(b=>b.onchange=async()=>{const r=await run('patchTasks',{items:[{id:b.dataset.dd,patch:{status:'Completed'},log:'Completed on Team desk'}]},'Done ✓');if(!r)b.checked=false});
+    $$('#view [data-dn]').forEach(b=>b.onclick=async()=>{b.disabled=true;await run('deskNudge',{taskId:b.dataset.dn},'Reminder sent');b.disabled=false});
+    $$('#view [data-dr]').forEach(b=>b.onclick=()=>this.reassign(b.dataset.dr));
+    $$('#view [data-du]').forEach(r=>r.onclick=()=>this.person(r.dataset.du));
+    $$('#view [data-bk]').forEach(b=>b.onclick=()=>run('boardSeen',{id:b.dataset.bk}));
+    $$('#view [data-be]').forEach(b=>b.onclick=()=>this.notice((D.board||[]).find(n=>n.id===b.dataset.be)));
+    $$('#view [data-bs]').forEach(a=>a.onclick=()=>{const n=(D.board||[]).find(x=>x.id===a.dataset.bs),s=n.seen||[];modal('Seen by',`<div><b>Seen (${s.length})</b><div class="sm">${s.map(uName).map(esc).join(', ')||'—'}</div></div><div style="margin-top:10px"><b>Not yet</b><div class="sm">${activeUsers().filter(u=>!s.includes(u.id)).map(u=>esc(u.name)).join(', ')||'—'}</div></div>`,'<span class="grow"></span><button class="btn" data-x>Close</button>','nar')});
+  },
+  reassign(id){const t=D.tasks.find(x=>x.id===id);if(!t)return;const td=today();
+    const m=modal('Give to someone else',`<p><b>${esc(t.title)}</b><br><span class="sm mut">Now with ${esc(uName(t.assigneeId))}${awayOn(t.assigneeId,td)?' (🌴 on leave)':''}</span></p><label>New person<select id="drU">${opts(activeUsers().filter(u=>u.id!==t.assigneeId).map(u=>[u.id,u.name+(awayOn(u.id,td)?' 🌴 on leave':'')]),'')}</select></label>`,'<span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="drGo">Reassign</button>','nar');
+    m.querySelector('#drGo').onclick=async()=>{const r=await run('deskReassign',{taskId:id,assigneeId:$('#drU').value},'Reassigned');if(r)closeModal()}},
+  person(uid){const L=D.tasks.filter(t=>isDesk(t)&&t.status!=='Completed'&&t.assigneeId===uid).sort((a,b)=>(a.dueDate||'9')<(b.dueDate||'9')?-1:1);
+    const m=modal(esc(uName(uid))+' – open internal items',L.length?L.map(t=>`<div class="drow"><div style="flex:1"><span class="lnk" data-pt2="${esc(t.id)}">${esc(t.title)}</span><div class="sm mut">From ${esc(uName(t.createdBy))}</div></div>${prPill(t.priority)} <span class="sm ${t.dueDate&&t.dueDate<today()?'over':'mut'}">${fD(t.dueDate)}</span>${can('tasksEdit')&&!isViewer()?` <button class="btn sm" data-pr2="${esc(t.id)}">↔</button>`:''}</div>`).join(''):'<div class="sm mut">Nothing open.</div>','<span class="grow"></span><button class="btn" data-x>Close</button>');
+    $$('[data-pt2]',m).forEach(a=>a.onclick=()=>taskModal(a.dataset.pt2));$$('[data-pr2]',m).forEach(b=>b.onclick=()=>this.reassign(b.dataset.pr2))},
+  notice(n){n=n||{};const m=modal(n.id?'Edit notice':'New notice',`<div class="f"><label class="s2">Notice<textarea id="bnT" rows="3" maxlength="500" placeholder="e.g. GSTR-3B due date extended to 25th">${esc(n.text||'')}</textarea></label><label>Show until (optional)<input type="date" id="bnU" value="${esc(n.until||'')}"></label><label class="chk" style="margin-top:22px"><input type="checkbox" id="bnP" ${n.pinned?'checked':''}> Pin to top</label></div>`,
+    `${n.id?'<button class="btn" id="bnD">Remove</button>':''}<span class="grow"></span><button class="btn" data-x>Cancel</button><button class="btn pri" id="bnS">${n.id?'Save':'Post notice'}</button>`,'nar');
+    m.querySelector('#bnS').onclick=async()=>{const r=await run('boardSave',{notice:{id:n.id||'',text:$('#bnT').value,until:$('#bnU').value,pinned:$('#bnP').checked}},n.id?'Notice saved':'Notice posted');if(r)closeModal()};
+    const d=m.querySelector('#bnD');if(d)d.onclick=async()=>{const r=await run('boardDelete',{id:n.id},'Notice removed');if(r)closeModal()}}
 };
 
 /* ---- automatic calendar (staff side) ---- */
